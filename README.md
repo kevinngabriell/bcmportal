@@ -32,7 +32,7 @@ Build for production:
 npm run build
 ```
 
-## 📦 Project Structure (Optional)
+## 📦 Project Structure
 ```bash
 src/
 ├── assets/          # Assets
