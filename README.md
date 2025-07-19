@@ -1,69 +1,58 @@
-# React + TypeScript + Vite
+# Business Continuity Management (BCM) Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This portal is **only for internal use** by the BCM Division.  
+It is developed using **Vite** and **React**, and currently **does not use any database**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔧 Prerequisites
 
-## Expanding the ESLint configuration
+To run this portal, make sure you have:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [Node.js](https://nodejs.org/) installed (v16+ recommended)
+- `npm` installed (usually comes with Node.js)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 🚀 Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Install dependencies:
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Run the development server:
+```bash
+npm run dev
 ```
+
+Build for production:
+```bash
+npm run build
+```
+
+## 📦 Project Structure (Optional)
+```bash
+src/
+├── assets/          # Assets
+├── components/      # Components
+├── logic/           # Logic
+└── pages/           # Pages
+└── variable/        # Variable
+```
+
+## 🧪 Features
+Currently, the portal only displays K3 features, including:
+	•	✅ Self Survey Area Kerja
+	•	✅ Self Survey Peralatan
+
+The following pages are currently unavailable and marked as “Coming Soon”:
+	•	⛔ Business Continuity (BC)
+	•	⛔ Crisis Management (CM)
+
+## 🛡️ Disclaimer
+
+This project is intended only for internal BCM team usage.
+Please do not distribute, fork, or publish externally without permission.
+
