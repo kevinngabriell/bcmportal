@@ -32,6 +32,7 @@ function groupByNamaGedung(data: ExcelRow[]): Record<string, ExcelRow[]> {
   return grouped;
 }
 
+
 //This function are used to generate self servey area kerja
 export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedFile[] {
   const grouped = groupByNamaGedung(excelData);
@@ -42,6 +43,9 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
 
     const newSheets = items.map((rowClean) => {
       const sectionData: (string | null)[][] = [];
+      const sesuaiData: (string | null)[][] = [];
+      const tidakSesuaiData: (string | null)[][] = [];
+      const tidakAdaItemData: (string | null)[][] = [];
 
       //Nama Gedung, Jumlah Lantai, and Status Gedung
       sectionData.push([""]);
@@ -53,124 +57,417 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
 
       //Set looping floor
       const lantaiList = ["4", "3", "2", "1", ""]; 
-
+      
       //Looping data for each floor
       lantaiList.forEach((lantai) => {
         //Set the suffix
         const suffix = lantai ? `${lantai}` : "";
 
-        //Push lantai dan area kerja
-        sectionData.push(["Lantai", rowClean[`Lantai ${suffix}`] || ""]);
-        sectionData.push(["Area/Unit Kerja", rowClean[`Area / Unit Kerja (Apabila terdapat Unit Kerja Kantor Pusat/Kantor Wilayah/Tenant/Hub atau area yang belum terdapat pada list, dapat ditambahkan pada opsi other)${suffix}`] || ""]);
+        if(namaGedung === 'Palembang'){
+              console.log(`suffix ` + suffix);
+          }
         
-        //APAR Question
-        sectionData.push([""]);
-        sectionData.push(["----APAR---"]);
-        sectionData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || ""]);
-        sectionData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jelas, ${suffix}`] || ""]);
-        sectionData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi, ${suffix}`] || ""]);
-        sectionData.push(["Lampirkan 1 sampel dokumentasi foto APAR dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+        if (suffix !== null) {
+          
+          const lantai = rowClean[`Lantai ${suffix}`] || suffix ;
+          const areaKerja = rowClean[`Area / Unit Kerja (Apabila terdapat Unit Kerja Kantor Pusat/Kantor Wilayah/Tenant/Hub atau area yang belum terdapat pada list, dapat ditambahkan pada opsi other)${suffix}`];
 
-        //Hydrant Question
-        sectionData.push([""]);
-        sectionData.push(["----HYDRANT---"]);
-        sectionData.push(["Apakah Terdapat Hydrant ?", rowClean[`Apakah terdapat HYDRANT di lantai ini? ${suffix}`] || ""]);
-        sectionData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar pemasangan hydrant: 1. Hydrant dapat dilihat dengan jelas 2. Hydrant mudah untuk diakses (Tidak terhalang benda) 3. Hydrant dalam kondisi terawat dengan baik dan siap digunak${suffix}`] || ""]);
-        sectionData.push(["Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ${suffix}`] || ""]);
-        sectionData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`] || rowClean[`Lampirkan dokumentasi foto Hydrant yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+          if(namaGedung === 'Palembang'){
+              console.log(lantai);
+              // console.log(areaKerja);
+          }
+          
+          if (lantai && areaKerja) {
+            sectionData.push(["Lantai", lantai]);
+            sectionData.push(["Area/Unit Kerja", areaKerja]);
 
-        //Warden Box Question
-        sectionData.push([""]);
-        sectionData.push(["----WARDEN BOX---"]);
-        sectionData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
-        //Warden Box question special case
-        if(suffix === ''){
-          sectionData.push([
-            "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
-            rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka` ]
-            || ""
-          ]);
-        } else if (suffix === '1'){
-          sectionData.push([
-            "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
-            rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka` ]
-            || ""
-          ]);
-        } else if (suffix === '2'){
-          sectionData.push([
-            "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
-            rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apakah` ]
-            || ""
-          ]);
-        } else if (suffix === '3'){
-          sectionData.push([
-            "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
-            rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka1` ]
-            || ""
-          ]);
-        } else if (suffix === '4'){
-          sectionData.push([
-            "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
-            rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka2` ]
-            || ""
-          ]);
+            sesuaiData.push(["Lantai", lantai]);
+            sesuaiData.push(["Area/Unit Kerja", areaKerja]);
+
+            tidakSesuaiData.push(["Lantai", lantai]);
+            tidakSesuaiData.push(["Area/Unit Kerja", areaKerja]);
+
+            tidakAdaItemData.push(["Lantai", lantai]);
+            tidakAdaItemData.push(["Area/Unit Kerja", areaKerja]);
+          }
         }
-        sectionData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
-        sectionData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
 
-        //Sprinkler/Smoke Detector/Heat Detector Question
-        sectionData.push([""]);
-        sectionData.push(["----SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR---"]);
-        sectionData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?${suffix}`] || "" ]);
-        sectionData.push(["Apakah Sprinkler/Smoke Detector/Heat Detector memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Sprinkler / Smoke Detector / Heat Detector: 1. Sprinkler / Smoke Detector / Heat Detector tidak terhalang peralatan/aksesoris plafon 2. Sprinkler / Smoke Detector / Heat Dete${suffix}`] || "" ]);
-        sectionData.push(["Dari standar Sprinkler/Smoke Detector/Heat Detector di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Sprinkler / Smoke Detector / Heat Detector di atas, kriteria mana yang belum terpenuhi${suffix}` ] || "" ]);
-        sectionData.push(["Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", rowClean[`Lampirkan dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang belum memenuhi standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpe${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang memenuhi standar di atas${suffix}`]]);
+        const adaAPAR = rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`];
 
-        //Tangga Darurat Question
-        sectionData.push([""]);
-        sectionData.push(["----TANGGA DARURAT---"]);
-        sectionData.push(["Apakah Terdapat Tangga Darurat ?", rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api ${suffix}`] || rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api${suffix}`] ]);
-        sectionData.push(["Apakah Tangga Darurat memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Tangga Darurat : 1. Tangga Darurat memiliki emergency lamp 2. Tangga Darurat tidak terdapat barang-barang yang menghalangi 3. Terdapat rambu petunjuk di/menuju tangga darurat${suffix}`] || "" ]);
-        sectionData.push(["Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi${suffix}`] || "" ]);
-        sectionData.push(["Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini", rowClean[`Lampirkan dokumentasi foto Tangga Darurat yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`]]);
-        sectionData.push(["Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana4", rowClean[`Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana${suffix}`] || "" ]);
+        //Check apakah jawaban APAR ada atau tidak
+        if(adaAPAR === "Tidak"){
+          //Jika tidak ada push ke sheet tidak ada item
+          tidakAdaItemData.push([""]);
+          tidakAdaItemData.push(["----APAR---"]);
+          tidakAdaItemData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || ""]);
+          tidakAdaItemData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jelas, ${suffix}`] || ""]);
+          tidakAdaItemData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi, ${suffix}`] || ""]);
+          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto APAR dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+        } else if (adaAPAR === "Ya"){
+          const APARsesuai = rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jelas, ${suffix}`];
+          
+          if(APARsesuai === "Ya"){
+            //Jika sesuai masuk ke sheet sesuai
+            sesuaiData.push([""]);
+            sesuaiData.push(["----APAR---"]);
+            sesuaiData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || ""]);
+            sesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jelas, ${suffix}`] || ""]);
+            sesuaiData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi, ${suffix}`] || ""]);
+            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+          } else if (APARsesuai === "Tidak"){
+            //Jika sesuai masuk ke sheet sesuai
+            tidakSesuaiData.push([""]);
+            tidakSesuaiData.push(["----APAR---"]);
+            tidakSesuaiData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || ""]);
+            tidakSesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jelas, ${suffix}`] || ""]);
+            tidakSesuaiData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+          }
+        }
 
-        //Ruang Area terbataras Question
-        sectionData.push([""]);
-        sectionData.push(["----Ruang Area Terbatas---"]);
-        sectionData.push(["Apakah Terdapat Ruang Area Terbatas ?",rowClean[`Apakah di lantai ini terdapat Ruang Area Terbatas (R. Panel Distribusi/Hub) di area/unit kerja?${suffix}`] || ""]);
-        sectionData.push(["Apakah Ruang Area Terbatas memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Ruang Area Terbatas (Panel Distribusi/Hub) : 1. Terdapat APAR sesuai dengan ketentuan yang berlaku 2. Ruang area terbatas tidak terdapat barang-barang tidak terpakai 3. Terpa${suffix}`] || ""]);
-        sectionData.push(["Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi ?",rowClean[`Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
-        sectionData.push(["Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini",rowClean[`Lampirkan dokumentasi foto Ruang Area Terbatas yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini yang telah sesuai seluruh standar di atas${suffix}`]]);
+        const adaHYDRANT = rowClean[`Apakah terdapat HYDRANT di lantai ini? ${suffix}`];
 
-        //Area Berlindung Question
-        sectionData.push([""]);
-        sectionData.push(["----Area Berlindung Gempa---"]);
-        sectionData.push(["Apakah Terdapat Area Berlindung Gempa ?",rowClean[`Apakah terdapat Area / Tempat Berlindung (kolong meja/safety point) di area/unit kerja yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`] || ""]);
-        sectionData.push(["Lampiran Area/Tempat Berlindung",rowClean[`Lampirkan dokumentasi foto Area/Tempat Berlindung yang terhalang benda dan tidak dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`] || rowClean[`Lampirkan sampel dokumentasi foto Tempat Berlindung dilantai ini yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`]]);
+        if(adaHYDRANT === "Tidak"){
+          tidakAdaItemData.push([""]);
+          tidakAdaItemData.push(["----HYDRANT---"]);
+          tidakAdaItemData.push(["Apakah Terdapat Hydrant ?", rowClean[`Apakah terdapat HYDRANT di lantai ini? ${suffix}`] || ""]);
+          tidakAdaItemData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar pemasangan hydrant: 1. Hydrant dapat dilihat dengan jelas 2. Hydrant mudah untuk diakses (Tidak terhalang benda) 3. Hydrant dalam kondisi terawat dengan baik dan siap digunak${suffix}`] || ""]);
+          tidakAdaItemData.push(["Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ${suffix}`] || ""]);
+          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`] || rowClean[`Lampirkan dokumentasi foto Hydrant yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+        } else if (adaHYDRANT === "Ya"){
+          const HYDRANTsesuai = rowClean[`Berikut merupakan standar pemasangan hydrant: 1. Hydrant dapat dilihat dengan jelas 2. Hydrant mudah untuk diakses (Tidak terhalang benda) 3. Hydrant dalam kondisi terawat dengan baik dan siap digunak${suffix}`];
 
-        //Assessment Declaration
-        sectionData.push([""]);
-        sectionData.push(["Apakah Telah dilakukan assessment ?",rowClean[`Dengan ini kami menyatakan bahwa seluruh item di lantai ini (area kerja) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan belum ${suffix}`] || ""]);
-        sectionData.push([""]);
+          if(HYDRANTsesuai === "Ya"){
+            sesuaiData.push([""]);
+            sesuaiData.push(["----HYDRANT---"]);
+            sesuaiData.push(["Apakah Terdapat Hydrant ?", rowClean[`Apakah terdapat HYDRANT di lantai ini? ${suffix}`] || ""]);
+            sesuaiData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar pemasangan hydrant: 1. Hydrant dapat dilihat dengan jelas 2. Hydrant mudah untuk diakses (Tidak terhalang benda) 3. Hydrant dalam kondisi terawat dengan baik dan siap digunak${suffix}`] || ""]);
+            sesuaiData.push(["Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ${suffix}`] || ""]);
+            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`] || rowClean[`Lampirkan dokumentasi foto Hydrant yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+          } else if (HYDRANTsesuai === "Tidak"){
+            tidakSesuaiData.push([""]);
+            tidakSesuaiData.push(["----HYDRANT---"]);
+            tidakSesuaiData.push(["Apakah Terdapat Hydrant ?", rowClean[`Apakah terdapat HYDRANT di lantai ini? ${suffix}`] || ""]);
+            tidakSesuaiData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar pemasangan hydrant: 1. Hydrant dapat dilihat dengan jelas 2. Hydrant mudah untuk diakses (Tidak terhalang benda) 3. Hydrant dalam kondisi terawat dengan baik dan siap digunak${suffix}`] || ""]);
+            tidakSesuaiData.push(["Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ${suffix}`] || ""]);
+            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`] || rowClean[`Lampirkan dokumentasi foto Hydrant yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+          }
+        }
+
+        const adaWARDENBOX = rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`];
+
+        if(adaWARDENBOX === "Tidak"){
+          //Warden Box Question
+          tidakAdaItemData.push([""]);
+          tidakAdaItemData.push(["----WARDEN BOX---"]);
+          tidakAdaItemData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+          //Warden Box question special case
+          if(suffix === ''){
+            tidakAdaItemData.push([
+              "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+              rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka` ]
+              || ""
+            ]);
+          } else if (suffix === '1'){
+            tidakAdaItemData.push([
+              "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+              rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka` ]
+              || ""
+            ]);
+          } else if (suffix === '2'){
+            tidakAdaItemData.push([
+              "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+              rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apakah` ]
+              || ""
+            ]);
+          } else if (suffix === '3'){
+            tidakAdaItemData.push([
+              "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+              rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka1` ]
+              || ""
+            ]);
+          } else if (suffix === '4'){
+            tidakAdaItemData.push([
+              "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+              rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka2` ]
+              || ""
+            ]);
+          }
+          tidakAdaItemData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+
+        } else if (adaWARDENBOX === "Ya"){
+
+            if(suffix === '' || suffix === '1'){
+              const WARDENBOXsesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka` ];
+
+              if(WARDENBOXsesuai === "Ya"){
+                sesuaiData.push([""]);
+                sesuaiData.push(["----WARDEN BOX---"]);
+                sesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                sesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka` ]
+                  || ""
+                ]);
+                sesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              } else if (WARDENBOXsesuai === "Tidak"){
+                tidakSesuaiData.push([""]);
+                tidakSesuaiData.push(["----WARDEN BOX---"]);
+                tidakSesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                tidakSesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka` ]
+                  || ""
+                ]);
+                tidakSesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              }
+            } else if (suffix === '2'){
+              const WARDENBOXsesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apakah` ];
+
+              if(WARDENBOXsesuai === "Ya"){
+                sesuaiData.push([""]);
+                sesuaiData.push(["----WARDEN BOX---"]);
+                sesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                sesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apakah` ]
+                  || ""
+                ]);
+                sesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              } else if (WARDENBOXsesuai === "Tidak"){
+                tidakSesuaiData.push([""]);
+                tidakSesuaiData.push(["----WARDEN BOX---"]);
+                tidakSesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                tidakSesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apakah` ]
+                  || ""
+                ]);
+                tidakSesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              }
+            } else if (suffix === '3'){
+              const WARDENBOXsesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka1` ];
+
+              if(WARDENBOXsesuai === "Ya"){
+                sesuaiData.push([""]);
+                sesuaiData.push(["----WARDEN BOX---"]);
+                sesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                sesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka1` ]
+                  || ""
+                ]);
+                sesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              } else if (WARDENBOXsesuai === "Tidak"){
+                tidakSesuaiData.push([""]);
+                tidakSesuaiData.push(["----WARDEN BOX---"]);
+                tidakSesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                tidakSesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka1` ]
+                  || ""
+                ]);
+                tidakSesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              }
+            } else if (suffix === '4'){
+              const WARDENBOXsesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka2` ];
+
+              if(WARDENBOXsesuai === "Ya"){
+                sesuaiData.push([""]);
+                sesuaiData.push(["----WARDEN BOX---"]);
+                sesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                sesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka2` ]
+                  || ""
+                ]);
+                sesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              } else if (WARDENBOXsesuai === "Tidak"){
+                tidakSesuaiData.push([""]);
+                tidakSesuaiData.push(["----WARDEN BOX---"]);
+                tidakSesuaiData.push(["Apakah Terdapat Warden Box ?", rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || ""]);
+                tidakSesuaiData.push([
+                  "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                  rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Apaka2` ]
+                  || ""
+                ]);
+                tidakSesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+                tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
+              }
+            }
+
+        }
+
+        const adaSPRINKLER = rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?${suffix}`];
+
+        if(adaSPRINKLER === "Tidak"){
+          tidakAdaItemData.push([""]);
+          tidakAdaItemData.push(["----SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR---"]);
+          tidakAdaItemData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?${suffix}`] || "" ]);
+          tidakAdaItemData.push(["Apakah Sprinkler/Smoke Detector/Heat Detector memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Sprinkler / Smoke Detector / Heat Detector: 1. Sprinkler / Smoke Detector / Heat Detector tidak terhalang peralatan/aksesoris plafon 2. Sprinkler / Smoke Detector / Heat Dete${suffix}`] || "" ]);
+          tidakAdaItemData.push(["Dari standar Sprinkler/Smoke Detector/Heat Detector di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Sprinkler / Smoke Detector / Heat Detector di atas, kriteria mana yang belum terpenuhi${suffix}` ] || "" ]);
+          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", rowClean[`Lampirkan dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang belum memenuhi standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpe${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang memenuhi standar di atas${suffix}`]]);
+        } else if (adaSPRINKLER === "Ya "){
+          const SPRINKLERsesuai = rowClean[`Berikut merupakan standar Sprinkler / Smoke Detector / Heat Detector: 1. Sprinkler / Smoke Detector / Heat Detector tidak terhalang peralatan/aksesoris plafon 2. Sprinkler / Smoke Detector / Heat Dete${suffix}`];
+
+          if(SPRINKLERsesuai === "Ya"){
+            sesuaiData.push([""]);
+            sesuaiData.push(["----SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR---"]);
+            sesuaiData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?${suffix}`] || "" ]);
+            sesuaiData.push(["Apakah Sprinkler/Smoke Detector/Heat Detector memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Sprinkler / Smoke Detector / Heat Detector: 1. Sprinkler / Smoke Detector / Heat Detector tidak terhalang peralatan/aksesoris plafon 2. Sprinkler / Smoke Detector / Heat Dete${suffix}`] || "" ]);
+            sesuaiData.push(["Dari standar Sprinkler/Smoke Detector/Heat Detector di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Sprinkler / Smoke Detector / Heat Detector di atas, kriteria mana yang belum terpenuhi${suffix}` ] || "" ]);
+            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", rowClean[`Lampirkan dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang belum memenuhi standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpe${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang memenuhi standar di atas${suffix}`]]);
+          } else if (SPRINKLERsesuai === "Tidak"){
+            tidakSesuaiData.push([""]);
+            tidakSesuaiData.push(["----SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR---"]);
+            tidakSesuaiData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?${suffix}`] || "" ]);
+            tidakSesuaiData.push(["Apakah Sprinkler/Smoke Detector/Heat Detector memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Sprinkler / Smoke Detector / Heat Detector: 1. Sprinkler / Smoke Detector / Heat Detector tidak terhalang peralatan/aksesoris plafon 2. Sprinkler / Smoke Detector / Heat Dete${suffix}`] || "" ]);
+            tidakSesuaiData.push(["Dari standar Sprinkler/Smoke Detector/Heat Detector di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Sprinkler / Smoke Detector / Heat Detector di atas, kriteria mana yang belum terpenuhi${suffix}` ] || "" ]);
+            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", rowClean[`Lampirkan dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang belum memenuhi standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpe${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang memenuhi standar di atas${suffix}`]]);
+          }
+        }
+
+        const adaTANGGA = rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api ${suffix}`] || rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api${suffix}`];
+
+        if(adaTANGGA === "Tidak"){
+          tidakAdaItemData.push([""]);
+          tidakAdaItemData.push(["----TANGGA DARURAT---"]);
+          tidakAdaItemData.push(["Apakah Terdapat Tangga Darurat ?", rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api ${suffix}`] || rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api${suffix}`] ]);
+          tidakAdaItemData.push(["Apakah Tangga Darurat memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Tangga Darurat : 1. Tangga Darurat memiliki emergency lamp 2. Tangga Darurat tidak terdapat barang-barang yang menghalangi 3. Terdapat rambu petunjuk di/menuju tangga darurat${suffix}`] || "" ]);
+          tidakAdaItemData.push(["Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi${suffix}`] || "" ]);
+          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini", rowClean[`Lampirkan dokumentasi foto Tangga Darurat yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`]]);
+          tidakAdaItemData.push(["Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana4", rowClean[`Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana${suffix}`] || "" ]);
+        } else if (adaTANGGA === "Ya"){
+          const TANGGAsesuai = rowClean[`Berikut merupakan standar Tangga Darurat : 1. Tangga Darurat memiliki emergency lamp 2. Tangga Darurat tidak terdapat barang-barang yang menghalangi 3. Terdapat rambu petunjuk di/menuju tangga darurat${suffix}`];
+
+          if(TANGGAsesuai === "Ya"){
+            sesuaiData.push([""]);
+            sesuaiData.push(["----TANGGA DARURAT---"]);
+            sesuaiData.push(["Apakah Terdapat Tangga Darurat ?", rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api ${suffix}`] || rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api${suffix}`] ]);
+            sesuaiData.push(["Apakah Tangga Darurat memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Tangga Darurat : 1. Tangga Darurat memiliki emergency lamp 2. Tangga Darurat tidak terdapat barang-barang yang menghalangi 3. Terdapat rambu petunjuk di/menuju tangga darurat${suffix}`] || "" ]);
+            sesuaiData.push(["Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi${suffix}`] || "" ]);
+            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini", rowClean[`Lampirkan dokumentasi foto Tangga Darurat yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`]]);
+            sesuaiData.push(["Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana4", rowClean[`Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana${suffix}`] || "" ]);
+          } else if (TANGGAsesuai === "Tidak"){
+            tidakSesuaiData.push([""]);
+            tidakSesuaiData.push(["----TANGGA DARURAT---"]);
+            tidakSesuaiData.push(["Apakah Terdapat Tangga Darurat ?", rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api ${suffix}`] || rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api${suffix}`] ]);
+            tidakSesuaiData.push(["Apakah Tangga Darurat memenuhi seluruh standar yang tertera ?", rowClean[`Berikut merupakan standar Tangga Darurat : 1. Tangga Darurat memiliki emergency lamp 2. Tangga Darurat tidak terdapat barang-barang yang menghalangi 3. Terdapat rambu petunjuk di/menuju tangga darurat${suffix}`] || "" ]);
+            tidakSesuaiData.push(["Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi${suffix}`] || "" ]);
+            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini", rowClean[`Lampirkan dokumentasi foto Tangga Darurat yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`]]);
+            tidakSesuaiData.push(["Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana4", rowClean[`Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana${suffix}`] || "" ]);
+          }
+        }
+
+        const adaRAT = rowClean[`Apakah di lantai ini terdapat Ruang Area Terbatas (R. Panel Distribusi/Hub) di area/unit kerja?${suffix}`];
+
+        if(adaRAT === "Tidak"){
+          tidakAdaItemData.push([""]);
+          tidakAdaItemData.push(["----Ruang Area Terbatas---"]);
+          tidakAdaItemData.push(["Apakah Terdapat Ruang Area Terbatas ?",rowClean[`Apakah di lantai ini terdapat Ruang Area Terbatas (R. Panel Distribusi/Hub) di area/unit kerja?${suffix}`] || ""]);
+          tidakAdaItemData.push(["Apakah Ruang Area Terbatas memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Ruang Area Terbatas (Panel Distribusi/Hub) : 1. Terdapat APAR sesuai dengan ketentuan yang berlaku 2. Ruang area terbatas tidak terdapat barang-barang tidak terpakai 3. Terpa${suffix}`] || ""]);
+          tidakAdaItemData.push(["Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi ?",rowClean[`Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini",rowClean[`Lampirkan dokumentasi foto Ruang Area Terbatas yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini yang telah sesuai seluruh standar di atas${suffix}`]]);
+        } else if (adaRAT === "Ya"){
+          const RATsesuai = rowClean[`Berikut merupakan standar Ruang Area Terbatas (Panel Distribusi/Hub) : 1. Terdapat APAR sesuai dengan ketentuan yang berlaku 2. Ruang area terbatas tidak terdapat barang-barang tidak terpakai 3. Terpa${suffix}`];
+
+          if(RATsesuai === "Ya"){
+            sesuaiData.push([""]);
+            sesuaiData.push(["----Ruang Area Terbatas---"]);
+            sesuaiData.push(["Apakah Terdapat Ruang Area Terbatas ?",rowClean[`Apakah di lantai ini terdapat Ruang Area Terbatas (R. Panel Distribusi/Hub) di area/unit kerja?${suffix}`] || ""]);
+            sesuaiData.push(["Apakah Ruang Area Terbatas memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Ruang Area Terbatas (Panel Distribusi/Hub) : 1. Terdapat APAR sesuai dengan ketentuan yang berlaku 2. Ruang area terbatas tidak terdapat barang-barang tidak terpakai 3. Terpa${suffix}`] || ""]);
+            sesuaiData.push(["Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi ?",rowClean[`Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini",rowClean[`Lampirkan dokumentasi foto Ruang Area Terbatas yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini yang telah sesuai seluruh standar di atas${suffix}`]]);
+          } else if (RATsesuai === "Tidak"){
+            tidakSesuaiData.push([""]);
+            tidakSesuaiData.push(["----Ruang Area Terbatas---"]);
+            tidakSesuaiData.push(["Apakah Terdapat Ruang Area Terbatas ?",rowClean[`Apakah di lantai ini terdapat Ruang Area Terbatas (R. Panel Distribusi/Hub) di area/unit kerja?${suffix}`] || ""]);
+            tidakSesuaiData.push(["Apakah Ruang Area Terbatas memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Ruang Area Terbatas (Panel Distribusi/Hub) : 1. Terdapat APAR sesuai dengan ketentuan yang berlaku 2. Ruang area terbatas tidak terdapat barang-barang tidak terpakai 3. Terpa${suffix}`] || ""]);
+            tidakSesuaiData.push(["Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi ?",rowClean[`Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
+            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini",rowClean[`Lampirkan dokumentasi foto Ruang Area Terbatas yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini yang telah sesuai seluruh standar di atas${suffix}`]]);
+          }
+        }
+
+        const adaAreaBerlindung = rowClean[`Apakah terdapat Area / Tempat Berlindung (kolong meja/safety point) di area/unit kerja yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`];
+
+        if(adaAreaBerlindung === "Tidak"){
+           //Area Berlindung Question
+          tidakAdaItemData.push([""]);
+          tidakAdaItemData.push(["----Area Berlindung Gempa---"]);
+          tidakAdaItemData.push(["Apakah Terdapat Area Berlindung Gempa ?",rowClean[`Apakah terdapat Area / Tempat Berlindung (kolong meja/safety point) di area/unit kerja yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`] || ""]);
+          tidakAdaItemData.push(["Lampiran Area/Tempat Berlindung",rowClean[`Lampirkan dokumentasi foto Area/Tempat Berlindung yang terhalang benda dan tidak dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`] || rowClean[`Lampirkan sampel dokumentasi foto Tempat Berlindung dilantai ini yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`]]);
+        } else if(adaAreaBerlindung === "Ya") {
+           //Area Berlindung Question
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Area Berlindung Gempa---"]);
+          sesuaiData.push(["Apakah Terdapat Area Berlindung Gempa ?",rowClean[`Apakah terdapat Area / Tempat Berlindung (kolong meja/safety point) di area/unit kerja yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`] || ""]);
+          sesuaiData.push(["Lampiran Area/Tempat Berlindung",rowClean[`Lampirkan dokumentasi foto Area/Tempat Berlindung yang terhalang benda dan tidak dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`] || rowClean[`Lampirkan sampel dokumentasi foto Tempat Berlindung dilantai ini yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`]]);
+        }
+
+        const checkAssessment = rowClean[`Dengan ini kami menyatakan bahwa seluruh item di lantai ini (area kerja) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan belum ${suffix}`];
+
+        if(checkAssessment){
+          //Assessment Declaration
+          sectionData.push([""]);
+          sectionData.push(["Apakah Telah dilakukan assessment ?",rowClean[`Dengan ini kami menyatakan bahwa seluruh item di lantai ini (area kerja) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan belum ${suffix}`] || ""]);
+          sectionData.push([""]);
+        }
+
+        sesuaiData.push([""]);
+        sesuaiData.push([""]);
+
+        tidakSesuaiData.push([""]);
+        tidakSesuaiData.push([""]);
+
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push([""]);
       });
 
-      return sectionData;
+      return {
+        sectionData,
+        sesuaiData,
+        tidakSesuaiData,
+        tidakAdaItemData,
+      };
     });
 
-    const combined = newSheets.flatMap((sheet) => [...sheet, [""]]);
+    const semuaSectionData = newSheets.flatMap(sheet => [...sheet.sectionData, [""]]);
+    const semuaSesuaiData = newSheets.flatMap(sheet => sheet.sesuaiData);
+    const semuaTidakSesuaiData = newSheets.flatMap(sheet => sheet.tidakSesuaiData);
+    const semuaTidakAdaItemData = newSheets.flatMap(sheet => sheet.tidakAdaItemData);
 
-    const ws = XLSX.utils.aoa_to_sheet(combined);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Form");
+
+    if (semuaSectionData.length > 20) {
+      const ws = XLSX.utils.aoa_to_sheet(semuaSectionData);
+      XLSX.utils.book_append_sheet(wb, ws, "Form");
+    }
+    if (semuaSesuaiData.length > 20) {
+      const wsSesuai = XLSX.utils.aoa_to_sheet(semuaSesuaiData);
+      XLSX.utils.book_append_sheet(wb, wsSesuai, "Sesuai");
+    }
+    if(semuaTidakSesuaiData.length > 20){
+      const wsTidakSesuai = XLSX.utils.aoa_to_sheet(semuaTidakSesuaiData);
+      XLSX.utils.book_append_sheet(wb, wsTidakSesuai, "Tidak Sesuai");
+    }
+    if (semuaTidakAdaItemData.length > 20) {
+      const wsTidakAdaItem = XLSX.utils.aoa_to_sheet(semuaTidakAdaItemData);
+      XLSX.utils.book_append_sheet(wb, wsTidakAdaItem, "Tidak Ada Item");
+    }
 
     const fileName = `FormSelfSurveyAreaKerjaK3_${statusGedung}_${namaGedung}.xlsx`;
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const blob = new Blob([wbout], { type: "application/octet-stream" });
 
-    generatedFiles.push({
-      namaGedung, fileName, blob, statusGedung
-    });
+    generatedFiles.push({ namaGedung, fileName, blob, statusGedung });
   });
 
   return generatedFiles;
@@ -188,159 +485,532 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
 
     const newSheets = items.map((rowClean) => {
       const sectionData: (string | null)[][] = [];
+      const sesuaiData: (string | null)[][] = [];
+      const tidakSesuaiData: (string | null)[][] = [];
+      const tidakAdaItemData: (string | null)[][] = [];
 
       //Question for Nama Gedung
       sectionData.push([""]);
       sectionData.push(["Nama Gedung", rowClean["Nama Gedung (Contoh : Bekasi)"] || ""]);
       sectionData.push(["Status Gedung", rowClean["Pilih Gedung (KP/Kanwil/KCU/KCP)"] || ""]);
 
-      //Poster PK3 Question
-      sectionData.push([""]);
-      sectionData.push(["----POSTER PK3---"]);
-      sectionData.push(["Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3) ?", rowClean["Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3)?"] || ""]);
-      sectionData.push(["Lantai Poster UU 1 Tahun 1970 terpasang", rowClean["Lantai Poster UU 1 Tahun 1970 terpasang"] || ""]);
-      sectionData.push(["Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang ?", rowClean["Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang"]]);
-      sectionData.push(["Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini", rowClean["Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini"]]);
+      const AdaPosterK3 = rowClean["Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3)?"];
 
-      //Kawasan Area Merokok Question
-      sectionData.push([""]);
-      sectionData.push(["----KAWASAN AREA MEROKOK---"]);
-      sectionData.push(["Apakah terpasang Rambu Kawasan dilarang merokok ?", rowClean["Apakah terpasang Rambu Kawasan dilarang merokok?* *Di area publik untuk menandakan bahwa gedung BCA adalah kawasan bebas rokok"] || ""]);
-      sectionData.push(["Lantai Rambu Kawasan dilarang merokok terpasang", rowClean["Lantai Rambu Kawasan dilarang merokok terpasang"] || ""]);
-      sectionData.push(["Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang ?", rowClean["Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini", rowClean["Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini"] || ""]);
+      if(AdaPosterK3 === "Tidak"){
+        //Poster PK3 Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----POSTER PK3---"]);
+        tidakAdaItemData.push(["Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3) ?", rowClean["Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3)?"] || ""]);
+        tidakAdaItemData.push(["Lantai Poster UU 1 Tahun 1970 terpasang", rowClean["Lantai Poster UU 1 Tahun 1970 terpasang"] || ""]);
+        tidakAdaItemData.push(["Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang ?", rowClean["Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang"]]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini", rowClean["Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini"]]);
+      } else if (AdaPosterK3 === "Ya") {
+        //Poster PK3 Question
+        sesuaiData.push([""]);
+        sesuaiData.push(["----POSTER PK3---"]);
+        sesuaiData.push(["Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3) ?", rowClean["Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3)?"] || ""]);
+        sesuaiData.push(["Lantai Poster UU 1 Tahun 1970 terpasang", rowClean["Lantai Poster UU 1 Tahun 1970 terpasang"] || ""]);
+        sesuaiData.push(["Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang ?", rowClean["Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang"]]);
+        sesuaiData.push(["Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini", rowClean["Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini"]]);
+      }
 
-      //AED Question
-      sectionData.push([""]);
-      sectionData.push(["----AED---"]);
-      sectionData.push(["Apakah terdapat AED ?", rowClean["Apakah terdapat AED"] || ""]);
-      sectionData.push(["Lantai dimana AED berada ?", rowClean["Lantai dimana AED berada"] || ""]);
-      sectionData.push(["Area / Unit Kerja dimana AED berada ?", rowClean["Area / Unit Kerja dimana AED berada"] || ""]);
-      sectionData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"] || ""]);
-      sectionData.push(["Dari standar AED di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar AED di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto AED yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto AED yang berada di gedung ini"] || ""]);
+      const AdaKawasanMerokok = rowClean["Apakah terpasang Rambu Kawasan dilarang merokok?* *Di area publik untuk menandakan bahwa gedung BCA adalah kawasan bebas rokok"];
 
-      //P3K Question
-      sectionData.push([""]);
-      sectionData.push(["----P3K---"]);
-      sectionData.push(["Apakah terdapat Kotak P3K ?", rowClean["Apakah terdapat Kotak P3K?"] || ""]);
-      sectionData.push(["Apakah Kotak P3K berada di PIC yang seharusnya ?", rowClean["Apakah Kotak P3K berada di PIC yang seharusnya (Mengacu pada memo 092, 096, dan 097 MO MRK 2023) PIC Kotak P3K dapat dilihat pada gambar dibawah"] || ""]);
-      sectionData.push(["Lantai & Unit Kerja dimana kotak P3K berada ?", rowClean["Lantai & Unit Kerja dimana kotak P3K berada"] || ""]);
-      sectionData.push(["Apakah Kotak P3K memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Kotak P3K: 1. Isi obat di dalam kotak P3K sesuai dan tidak expired 2. Kotak P3K dimonitor secara berkala Apakah Kotak P3K memenuhi seluruh standar yang tertera?"] || ""]);
-      sectionData.push(["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini"] || ""]);
+      if(AdaKawasanMerokok === "Tidak"){
+        //Kawasan Area Merokok Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----KAWASAN AREA MEROKOK---"]);
+        tidakAdaItemData.push(["Apakah terpasang Rambu Kawasan dilarang merokok ?", rowClean["Apakah terpasang Rambu Kawasan dilarang merokok?* *Di area publik untuk menandakan bahwa gedung BCA adalah kawasan bebas rokok"] || ""]);
+        tidakAdaItemData.push(["Lantai Rambu Kawasan dilarang merokok terpasang", rowClean["Lantai Rambu Kawasan dilarang merokok terpasang"] || ""]);
+        tidakAdaItemData.push(["Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang ?", rowClean["Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini", rowClean["Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini"] || ""]);
+      } else if (AdaKawasanMerokok === "Ya"){
+        sesuaiData.push([""]);
+        sesuaiData.push(["----KAWASAN AREA MEROKOK---"]);
+        sesuaiData.push(["Apakah terpasang Rambu Kawasan dilarang merokok ?", rowClean["Apakah terpasang Rambu Kawasan dilarang merokok?* *Di area publik untuk menandakan bahwa gedung BCA adalah kawasan bebas rokok"] || ""]);
+        sesuaiData.push(["Lantai Rambu Kawasan dilarang merokok terpasang", rowClean["Lantai Rambu Kawasan dilarang merokok terpasang"] || ""]);
+        sesuaiData.push(["Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang ?", rowClean["Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang"] || ""]);
+        sesuaiData.push(["Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini", rowClean["Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini"] || ""]);
+      }
 
-      //Tabung Oksigen Question
-      sectionData.push([""]);
-      sectionData.push(["----Tabung Oksigen---"]);
-      sectionData.push(["Apakah terdapat Tabung Oksigen ?", rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"] || ""]);
-      sectionData.push(["Lantai dimana tabung oksigen berada ?", rowClean["Lantai dimana tabung oksigen berada"] || ""]);
-      sectionData.push(["Area / Unit Kerja dimana tabung oksigen berada ?", rowClean["Area / Unit Kerja dimana tabung oksigen berada"] || ""]);
-      sectionData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] || ""]);
-      sectionData.push(["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"] || ""]);
+      const AdaAED = rowClean["Apakah terdapat AED"];
 
-      //Ruang Menyusui Question
-      sectionData.push([""]);
-      sectionData.push(["----Ruang Menyusui---"]);
-      sectionData.push(["Apakah terdapat Ruang Menyusui/Ruang Laktasi ?", rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"] || ""]);
-      sectionData.push(["Lantai dimana Ruang Menyusui berada ?", rowClean["Lantai dimana Ruang Menyusui berada"] || ""]);
-      sectionData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"] || ""]);
-      sectionData.push(["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"] || ""]);
+      if(AdaAED === "Tidak"){
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----AED---"]);
+        tidakAdaItemData.push(["Apakah terdapat AED ?", rowClean["Apakah terdapat AED"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana AED berada ?", rowClean["Lantai dimana AED berada"] || ""]);
+        tidakAdaItemData.push(["Area / Unit Kerja dimana AED berada ?", rowClean["Area / Unit Kerja dimana AED berada"] || ""]);
+        tidakAdaItemData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"] || ""]);
+        tidakAdaItemData.push(["Dari standar AED di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar AED di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto AED yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto AED yang berada di gedung ini"] || ""]);
+      } else if (AdaAED === "Ya"){
+        const AEDSesuai = rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"];
 
-      //Ruang Mesin Lift Question
-      sectionData.push([""]);
-      sectionData.push(["----Ruang Mesin Lift---"]);
-      sectionData.push(["Apakah terdapat Ruang Mesin Lift ?", rowClean["Apakah terdapat Ruang Mesin Lift"] || ""]);
-      sectionData.push(["Lantai dimana Ruang Mesin Lift berada ?", rowClean["Lantai dimana Ruang Mesin Lift berada"] || ""]);
-      sectionData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"] || ""]);
-      sectionData.push(["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"] || ""]);
+        if(AEDSesuai === "Tidak"){
+          //AED Question
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----AED---"]);
+          tidakSesuaiData.push(["Apakah terdapat AED ?", rowClean["Apakah terdapat AED"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana AED berada ?", rowClean["Lantai dimana AED berada"] || ""]);
+          tidakSesuaiData.push(["Area / Unit Kerja dimana AED berada ?", rowClean["Area / Unit Kerja dimana AED berada"] || ""]);
+          tidakSesuaiData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"] || ""]);
+          tidakSesuaiData.push(["Dari standar AED di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar AED di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto AED yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto AED yang berada di gedung ini"] || ""]);
+        } else if (AEDSesuai === "Ya"){
+          //AED Question
+          sesuaiData.push([""]);
+          sesuaiData.push(["----AED---"]);
+          sesuaiData.push(["Apakah terdapat AED ?", rowClean["Apakah terdapat AED"] || ""]);
+          sesuaiData.push(["Lantai dimana AED berada ?", rowClean["Lantai dimana AED berada"] || ""]);
+          sesuaiData.push(["Area / Unit Kerja dimana AED berada ?", rowClean["Area / Unit Kerja dimana AED berada"] || ""]);
+          sesuaiData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"] || ""]);
+          sesuaiData.push(["Dari standar AED di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar AED di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto AED yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto AED yang berada di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaP3k = rowClean["Apakah terdapat Kotak P3K?"];
+
+      if(AdaP3k === "Tidak"){
+        //P3K Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----P3K---"]);
+        tidakAdaItemData.push(["Apakah terdapat Kotak P3K ?", rowClean["Apakah terdapat Kotak P3K?"] || ""]);
+        tidakAdaItemData.push(["Apakah Kotak P3K berada di PIC yang seharusnya ?", rowClean["Apakah Kotak P3K berada di PIC yang seharusnya (Mengacu pada memo 092, 096, dan 097 MO MRK 2023) PIC Kotak P3K dapat dilihat pada gambar dibawah"] || ""]);
+        tidakAdaItemData.push(["Lantai & Unit Kerja dimana kotak P3K berada ?", rowClean["Lantai & Unit Kerja dimana kotak P3K berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Kotak P3K memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Kotak P3K: 1. Isi obat di dalam kotak P3K sesuai dan tidak expired 2. Kotak P3K dimonitor secara berkala Apakah Kotak P3K memenuhi seluruh standar yang tertera?"] || ""]);
+        tidakAdaItemData.push(["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini"] || ""]);
+      } else if (AdaP3k === "Ya"){
+        const P3KSesuai = rowClean["Berikut merupakan standar Kotak P3K: 1. Isi obat di dalam kotak P3K sesuai dan tidak expired 2. Kotak P3K dimonitor secara berkala Apakah Kotak P3K memenuhi seluruh standar yang tertera?"];
+
+        if(P3KSesuai === "Tidak"){
+          //P3K Question
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----P3K---"]);
+          tidakSesuaiData.push(["Apakah terdapat Kotak P3K ?", rowClean["Apakah terdapat Kotak P3K?"] || ""]);
+          tidakSesuaiData.push(["Apakah Kotak P3K berada di PIC yang seharusnya ?", rowClean["Apakah Kotak P3K berada di PIC yang seharusnya (Mengacu pada memo 092, 096, dan 097 MO MRK 2023) PIC Kotak P3K dapat dilihat pada gambar dibawah"] || ""]);
+          tidakSesuaiData.push(["Lantai & Unit Kerja dimana kotak P3K berada ?", rowClean["Lantai & Unit Kerja dimana kotak P3K berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Kotak P3K memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Kotak P3K: 1. Isi obat di dalam kotak P3K sesuai dan tidak expired 2. Kotak P3K dimonitor secara berkala Apakah Kotak P3K memenuhi seluruh standar yang tertera?"] || ""]);
+          tidakSesuaiData.push(["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini"] || ""]);
+        } else if (P3KSesuai === "Ya"){
+          //P3K Question
+          sesuaiData.push([""]);
+          sesuaiData.push(["----P3K---"]);
+          sesuaiData.push(["Apakah terdapat Kotak P3K ?", rowClean["Apakah terdapat Kotak P3K?"] || ""]);
+          sesuaiData.push(["Apakah Kotak P3K berada di PIC yang seharusnya ?", rowClean["Apakah Kotak P3K berada di PIC yang seharusnya (Mengacu pada memo 092, 096, dan 097 MO MRK 2023) PIC Kotak P3K dapat dilihat pada gambar dibawah"] || ""]);
+          sesuaiData.push(["Lantai & Unit Kerja dimana kotak P3K berada ?", rowClean["Lantai & Unit Kerja dimana kotak P3K berada"] || ""]);
+          sesuaiData.push(["Apakah Kotak P3K memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Kotak P3K: 1. Isi obat di dalam kotak P3K sesuai dan tidak expired 2. Kotak P3K dimonitor secara berkala Apakah Kotak P3K memenuhi seluruh standar yang tertera?"] || ""]);
+          sesuaiData.push(["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaOksigen = rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"];
+
+      if(AdaOksigen === "Tidak"){
+        //Tabung Oksigen Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Tabung Oksigen---"]);
+        tidakAdaItemData.push(["Apakah terdapat Tabung Oksigen ?", rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana tabung oksigen berada ?", rowClean["Lantai dimana tabung oksigen berada"] || ""]);
+        tidakAdaItemData.push(["Area / Unit Kerja dimana tabung oksigen berada ?", rowClean["Area / Unit Kerja dimana tabung oksigen berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] || ""]);
+        tidakAdaItemData.push(["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"] || ""]);
+      } else if (AdaOksigen === "Ya "){
+        const OksigenSesuai = rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] ;
+
+        if(OksigenSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Tabung Oksigen---"]);
+          tidakSesuaiData.push(["Apakah terdapat Tabung Oksigen ?", rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana tabung oksigen berada ?", rowClean["Lantai dimana tabung oksigen berada"] || ""]);
+          tidakSesuaiData.push(["Area / Unit Kerja dimana tabung oksigen berada ?", rowClean["Area / Unit Kerja dimana tabung oksigen berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] || ""]);
+          tidakSesuaiData.push(["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"] || ""]);
+        } else if (OksigenSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Tabung Oksigen---"]);
+          sesuaiData.push(["Apakah terdapat Tabung Oksigen ?", rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"] || ""]);
+          sesuaiData.push(["Lantai dimana tabung oksigen berada ?", rowClean["Lantai dimana tabung oksigen berada"] || ""]);
+          sesuaiData.push(["Area / Unit Kerja dimana tabung oksigen berada ?", rowClean["Area / Unit Kerja dimana tabung oksigen berada"] || ""]);
+          sesuaiData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] || ""]);
+          sesuaiData.push(["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaMenyusui = rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"];
+
+      if(AdaMenyusui === "Tidak"){
+        //Ruang Menyusui Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Ruang Menyusui---"]);
+        tidakAdaItemData.push(["Apakah terdapat Ruang Menyusui/Ruang Laktasi ?", rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana Ruang Menyusui berada ?", rowClean["Lantai dimana Ruang Menyusui berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"] || ""]);
+        tidakAdaItemData.push(["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"] || ""]);
+      } else if (AdaMenyusui === "Ya"){
+        const MenyusuiSesuai = rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"];
+
+        if(MenyusuiSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Ruang Menyusui---"]);
+          tidakSesuaiData.push(["Apakah terdapat Ruang Menyusui/Ruang Laktasi ?", rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana Ruang Menyusui berada ?", rowClean["Lantai dimana Ruang Menyusui berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"] || ""]);
+          tidakSesuaiData.push(["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"] || ""]);
+        } else if (MenyusuiSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Ruang Menyusui---"]);
+          sesuaiData.push(["Apakah terdapat Ruang Menyusui/Ruang Laktasi ?", rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"] || ""]);
+          sesuaiData.push(["Lantai dimana Ruang Menyusui berada ?", rowClean["Lantai dimana Ruang Menyusui berada"] || ""]);
+          sesuaiData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"] || ""]);
+          sesuaiData.push(["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaRuangMesin = rowClean["Apakah terdapat Ruang Mesin Lift"];
+
+      if(AdaRuangMesin === "Tidak"){
+        //Ruang Mesin Lift Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Ruang Mesin Lift---"]);
+        tidakAdaItemData.push(["Apakah terdapat Ruang Mesin Lift ?", rowClean["Apakah terdapat Ruang Mesin Lift"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana Ruang Mesin Lift berada ?", rowClean["Lantai dimana Ruang Mesin Lift berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"] || ""]);
+        tidakAdaItemData.push(["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"] || ""]);
+      } else if (AdaRuangMesin === "Ya"){
+        const RuangMesinSesuai = rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"];
+
+        if(RuangMesinSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Ruang Mesin Lift---"]);
+          tidakSesuaiData.push(["Apakah terdapat Ruang Mesin Lift ?", rowClean["Apakah terdapat Ruang Mesin Lift"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana Ruang Mesin Lift berada ?", rowClean["Lantai dimana Ruang Mesin Lift berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"] || ""]);
+          tidakSesuaiData.push(["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"] || ""]);
+        } else if (RuangMesinSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Ruang Mesin Lift---"]);
+          sesuaiData.push(["Apakah terdapat Ruang Mesin Lift ?", rowClean["Apakah terdapat Ruang Mesin Lift"] || ""]);
+          sesuaiData.push(["Lantai dimana Ruang Mesin Lift berada ?", rowClean["Lantai dimana Ruang Mesin Lift berada"] || ""]);
+          sesuaiData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"] || ""]);
+          sesuaiData.push(["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaRuangPompa = rowClean["Apakah terdapat Ruang Pompa"];
+
+      if(AdaRuangPompa === "Tidak"){
+        //Ruang Pompa Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Ruang Pompa---"]);
+        tidakAdaItemData.push(["Apakah terdapat Ruang Pompa ?", rowClean["Apakah terdapat Ruang Pompa"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana Ruang Pompa berada ?", rowClean["Lantai dimana Ruang Pompa berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"] || ""]);
+        tidakAdaItemData.push(["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Pompa di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Pompa di gedung ini"] || ""]);
+      } else if (AdaRuangPompa === "Ya"){
+        const RuangPompaSesuai = rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"];
+
+        if(RuangPompaSesuai === "Tidak") {
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Ruang Pompa---"]);
+          tidakSesuaiData.push(["Apakah terdapat Ruang Pompa ?", rowClean["Apakah terdapat Ruang Pompa"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana Ruang Pompa berada ?", rowClean["Lantai dimana Ruang Pompa berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"] || ""]);
+          tidakSesuaiData.push(["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Pompa di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Pompa di gedung ini"] || ""]);
+        } else if (RuangPompaSesuai === "Ya"){
+          //Ruang Pompa Question
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Ruang Pompa---"]);
+          sesuaiData.push(["Apakah terdapat Ruang Pompa ?", rowClean["Apakah terdapat Ruang Pompa"] || ""]);
+          sesuaiData.push(["Lantai dimana Ruang Pompa berada ?", rowClean["Lantai dimana Ruang Pompa berada"] || ""]);
+          sesuaiData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"] || ""]);
+          sesuaiData.push(["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Ruang Pompa di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Pompa di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaRuangGenset = rowClean["Apakah terdapat Ruang Genset"];
+
+      if(AdaRuangGenset === "Tidak"){
+        //Ruang Genset Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Ruang Genset---"]);
+        tidakAdaItemData.push(["Apakah terdapat Ruang Genset ?", rowClean["Apakah terdapat Ruang Genset"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana Ruang Genset berada ?", rowClean["Lantai dimana Ruang Genset berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"] || ""]);
+        tidakAdaItemData.push(["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Genset di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Genset di gedung ini"] || ""]);
+      } else if (AdaRuangGenset === "Ya"){
+        const RuangGensetSesuai = rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"];
+
+        if(RuangGensetSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Ruang Genset---"]);
+          tidakSesuaiData.push(["Apakah terdapat Ruang Genset ?", rowClean["Apakah terdapat Ruang Genset"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana Ruang Genset berada ?", rowClean["Lantai dimana Ruang Genset berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"] || ""]);
+          tidakSesuaiData.push(["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Genset di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Genset di gedung ini"] || ""]);
+        } else if (RuangGensetSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Ruang Genset---"]);
+          sesuaiData.push(["Apakah terdapat Ruang Genset ?", rowClean["Apakah terdapat Ruang Genset"] || ""]);
+          sesuaiData.push(["Lantai dimana Ruang Genset berada ?", rowClean["Lantai dimana Ruang Genset berada"] || ""]);
+          sesuaiData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"] || ""]);
+          sesuaiData.push(["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Ruang Genset di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Genset di gedung ini"] || ""]);
+        }
+      }
       
-      //Ruang Pompa Question
-      sectionData.push([""]);
-      sectionData.push(["----Ruang Pompa---"]);
-      sectionData.push(["Apakah terdapat Ruang Pompa ?", rowClean["Apakah terdapat Ruang Pompa"] || ""]);
-      sectionData.push(["Lantai dimana Ruang Pompa berada ?", rowClean["Lantai dimana Ruang Pompa berada"] || ""]);
-      sectionData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"] || ""]);
-      sectionData.push(["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Ruang Pompa di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Pompa di gedung ini"] || ""]);
+      const AdaRuangTrafo = rowClean["Apakah terdapat Ruang Trafo"];
 
-      //Ruang Genset Question
-      sectionData.push([""]);
-      sectionData.push(["----Ruang Genset---"]);
-      sectionData.push(["Apakah terdapat Ruang Genset ?", rowClean["Apakah terdapat Ruang Genset"] || ""]);
-      sectionData.push(["Lantai dimana Ruang Genset berada ?", rowClean["Lantai dimana Ruang Genset berada"] || ""]);
-      sectionData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"] || ""]);
-      sectionData.push(["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Ruang Genset di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Genset di gedung ini"] || ""]);
-      
-      //Ruang Trafo Question
-      sectionData.push([""]);
-      sectionData.push(["----Ruang Trafo---"]);
-      sectionData.push(["Apakah terdapat Ruang Trafo ?", rowClean["Apakah terdapat Ruang Trafo"] || ""]);
-      sectionData.push(["Lantai dimana Ruang Trafo berada ?", rowClean["Lantai dimana Ruang Trafo berada"] || ""]);
-      sectionData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"] || ""]);
-      sectionData.push(["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Ruang Trafo di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Trafo di gedung ini"] || ""]);
+      if(AdaRuangTrafo === "Tidak"){
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Ruang Trafo---"]);
+        tidakAdaItemData.push(["Apakah terdapat Ruang Trafo ?", rowClean["Apakah terdapat Ruang Trafo"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana Ruang Trafo berada ?", rowClean["Lantai dimana Ruang Trafo berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"] || ""]);
+        tidakAdaItemData.push(["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Trafo di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Trafo di gedung ini"] || ""]);
+      } else if (AdaRuangTrafo === "Ya"){
+        const RuangTrafoSesuai = rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"]; 
 
-      //Tangki Timbun Question
-      sectionData.push([""]);
-      sectionData.push(["----Tangki Timbun---"]);
-      sectionData.push(["Apakah terdapat Tangki Timbun ?", rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"] || ""]);
-      sectionData.push(["Lantai dimana Tangki Timbun berada ?", rowClean["Lantai dimana Tangki Timbun berada"] || ""]);
-      sectionData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"] || ""]);
-      sectionData.push(["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Tangki Timbun di gedung ini", rowClean["Lampirkan dokumentasi foto Tangki Timbun di gedung ini"] || ""]);
+        if(RuangTrafoSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Ruang Trafo---"]);
+          tidakSesuaiData.push(["Apakah terdapat Ruang Trafo ?", rowClean["Apakah terdapat Ruang Trafo"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana Ruang Trafo berada ?", rowClean["Lantai dimana Ruang Trafo berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"] || ""]);
+          tidakSesuaiData.push(["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Trafo di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Trafo di gedung ini"] || ""]);
+        } else if (RuangTrafoSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Ruang Trafo---"]);
+          sesuaiData.push(["Apakah terdapat Ruang Trafo ?", rowClean["Apakah terdapat Ruang Trafo"] || ""]);
+          sesuaiData.push(["Lantai dimana Ruang Trafo berada ?", rowClean["Lantai dimana Ruang Trafo berada"] || ""]);
+          sesuaiData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"] || ""]);
+          sesuaiData.push(["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Ruang Trafo di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Trafo di gedung ini"] || ""]);
+        }
+      }
 
-      //Main Control Fire Alarm Question
-      sectionData.push([""]);
-      sectionData.push(["----MCFA---"]);
-      sectionData.push(["Apakah terdapat MCFA (Main Control Fire Alarm) ?", rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"] || ""]);
-      sectionData.push(["Lantai dimana MCFA berada ?", rowClean["Lantai dimana MCFA berada"] || ""]);
-      sectionData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"] || ""]);
-      sectionData.push(["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto MCFA yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto MCFA yang berada di gedung ini"] || ""]);
-      
-      //Mesin Paging Question
-      sectionData.push([""]);
-      sectionData.push(["----Mesin Paging---"]);
-      sectionData.push(["Apakah terdapat Mesin Paging ?", rowClean["Apakah terdapat Mesin Paging"] || ""]);
-      sectionData.push(["Lantai dimana Mesin Paging berada ?", rowClean["Lantai dimana Mesin Paging berada"] || ""]);
-      sectionData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"] || ""]);
-      sectionData.push(["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"] || ""]);
+      const AdaTangkiTimbun = rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"];
 
-      //Hydrant Outdoor Question
-      sectionData.push([""]);
-      sectionData.push(["----Hydrant Outdoor---"]);
-      sectionData.push(["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung) ?", rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"] || ""]);
-      sectionData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"] || ""]);
-      sectionData.push(["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"] || ""]);
-      
-      //Assembly Point Question
-      sectionData.push([""]);
-      sectionData.push(["----Assembly Point---"]);
-      sectionData.push(["Apakah terdapat Titik Kumpul (Assembly Point) ?", rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] || ""]);
-      sectionData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"] || ""]);
-      sectionData.push(["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"] || ""]);
-      sectionData.push(["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"] || ""]);
+      if(AdaTangkiTimbun === "Tidak"){
+
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Tangki Timbun---"]);
+        tidakAdaItemData.push(["Apakah terdapat Tangki Timbun ?", rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana Tangki Timbun berada ?", rowClean["Lantai dimana Tangki Timbun berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"] || ""]);
+        tidakAdaItemData.push(["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Tangki Timbun di gedung ini", rowClean["Lampirkan dokumentasi foto Tangki Timbun di gedung ini"] || ""]);
+      } else if (AdaTangkiTimbun === "Ya"){
+
+        const TangkiTimbunSesuai = rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"];
+
+        if(TangkiTimbunSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Tangki Timbun---"]);
+          tidakSesuaiData.push(["Apakah terdapat Tangki Timbun ?", rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana Tangki Timbun berada ?", rowClean["Lantai dimana Tangki Timbun berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"] || ""]);
+          tidakSesuaiData.push(["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Tangki Timbun di gedung ini", rowClean["Lampirkan dokumentasi foto Tangki Timbun di gedung ini"] || ""]);
+
+        } else if (TangkiTimbunSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Tangki Timbun---"]);
+          sesuaiData.push(["Apakah terdapat Tangki Timbun ?", rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"] || ""]);
+          sesuaiData.push(["Lantai dimana Tangki Timbun berada ?", rowClean["Lantai dimana Tangki Timbun berada"] || ""]);
+          sesuaiData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"] || ""]);
+          sesuaiData.push(["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Tangki Timbun di gedung ini", rowClean["Lampirkan dokumentasi foto Tangki Timbun di gedung ini"] || ""]);
+          }
+        
+      }
+
+      const AdaMCFA = rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"];
+
+      if(AdaMCFA === "Tidak"){
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----MCFA---"]);
+        tidakAdaItemData.push(["Apakah terdapat MCFA (Main Control Fire Alarm) ?", rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana MCFA berada ?", rowClean["Lantai dimana MCFA berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"] || ""]);
+        tidakAdaItemData.push(["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto MCFA yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto MCFA yang berada di gedung ini"] || ""]);
+      } else if (AdaMCFA === "Ya"){
+        const MCFASesuai = rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"];
+
+        if(MCFASesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----MCFA---"]);
+          tidakSesuaiData.push(["Apakah terdapat MCFA (Main Control Fire Alarm) ?", rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana MCFA berada ?", rowClean["Lantai dimana MCFA berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"] || ""]);
+          tidakSesuaiData.push(["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto MCFA yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto MCFA yang berada di gedung ini"] || ""]);
+        } else if (MCFASesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----MCFA---"]);
+          sesuaiData.push(["Apakah terdapat MCFA (Main Control Fire Alarm) ?", rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"] || ""]);
+          sesuaiData.push(["Lantai dimana MCFA berada ?", rowClean["Lantai dimana MCFA berada"] || ""]);
+          sesuaiData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"] || ""]);
+          sesuaiData.push(["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto MCFA yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto MCFA yang berada di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaMesinPaging = rowClean["Apakah terdapat Mesin Paging"];
+
+      if(AdaMesinPaging === "Tidak"){
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Mesin Paging---"]);
+        tidakAdaItemData.push(["Apakah terdapat Mesin Paging ?", rowClean["Apakah terdapat Mesin Paging"] || ""]);
+        tidakAdaItemData.push(["Lantai dimana Mesin Paging berada ?", rowClean["Lantai dimana Mesin Paging berada"] || ""]);
+        tidakAdaItemData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"] || ""]);
+        tidakAdaItemData.push(["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"] || ""]);
+      } else if (AdaMesinPaging === "Ya"){
+        const MesinPagingSesuai = rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"];
+
+        if(MesinPagingSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Mesin Paging---"]);
+          tidakSesuaiData.push(["Apakah terdapat Mesin Paging ?", rowClean["Apakah terdapat Mesin Paging"] || ""]);
+          tidakSesuaiData.push(["Lantai dimana Mesin Paging berada ?", rowClean["Lantai dimana Mesin Paging berada"] || ""]);
+          tidakSesuaiData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"] || ""]);
+          tidakSesuaiData.push(["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"] || ""]);
+        } else if (MesinPagingSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Mesin Paging---"]);
+          sesuaiData.push(["Apakah terdapat Mesin Paging ?", rowClean["Apakah terdapat Mesin Paging"] || ""]);
+          sesuaiData.push(["Lantai dimana Mesin Paging berada ?", rowClean["Lantai dimana Mesin Paging berada"] || ""]);
+          sesuaiData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"] || ""]);
+          sesuaiData.push(["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaHydrant = rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"];
+
+      if(AdaHydrant === "Tidak"){
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Hydrant Outdoor---"]);
+        tidakAdaItemData.push(["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung) ?", rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"] || ""]);
+        tidakAdaItemData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"] || ""]);
+        tidakAdaItemData.push(["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"] || ""]);
+      } else if (AdaHydrant === "Ya"){
+        const HydrantSesuai = rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"];
+
+        if(HydrantSesuai === "Tidak"){
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Hydrant Outdoor---"]);
+          tidakSesuaiData.push(["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung) ?", rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"] || ""]);
+          tidakSesuaiData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"] || ""]);
+          tidakSesuaiData.push(["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"] || ""]);
+        } else if (HydrantSesuai === "Ya"){
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Hydrant Outdoor---"]);
+          sesuaiData.push(["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung) ?", rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"] || ""]);
+          sesuaiData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"] || ""]);
+          sesuaiData.push(["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"] || ""]);
+        }
+      }
+
+      const AdaAssemblyPoint = rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] ; 
+
+      if(AdaAssemblyPoint === "Tidak"){ 
+        //Assembly Point Question
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push(["----Assembly Point---"]);
+        tidakAdaItemData.push(["Apakah terdapat Titik Kumpul (Assembly Point) ?", rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] || ""]);
+        tidakAdaItemData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"] || ""]);
+        tidakAdaItemData.push(["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"] || ""]);
+        tidakAdaItemData.push(["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"] || ""]);
+      } else if (AdaAssemblyPoint === "Ya"){
+        const AssemblyPointSesuai = rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"];
+
+        if(AssemblyPointSesuai === "Tidak"){
+          //Assembly Point Question
+          tidakSesuaiData.push([""]);
+          tidakSesuaiData.push(["----Assembly Point---"]);
+          tidakSesuaiData.push(["Apakah terdapat Titik Kumpul (Assembly Point) ?", rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] || ""]);
+          tidakSesuaiData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"] || ""]);
+          tidakSesuaiData.push(["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          tidakSesuaiData.push(["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"] || ""]);
+        } else if (AssemblyPointSesuai === "Ya"){
+          //Assembly Point Question
+          sesuaiData.push([""]);
+          sesuaiData.push(["----Assembly Point---"]);
+          sesuaiData.push(["Apakah terdapat Titik Kumpul (Assembly Point) ?", rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] || ""]);
+          sesuaiData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"] || ""]);
+          sesuaiData.push(["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"] || ""]);
+          sesuaiData.push(["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"] || ""]);
+        }
+      }
 
       //Assessment Declaration
       sectionData.push([""]);
       sectionData.push([""]);
       sectionData.push(["Dengan ini kami menyatakan bahwa seluruh item ini (Peralatan K3 & Utility) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan bel", rowClean["Dengan ini kami menyatakan bahwa seluruh item ini (Peralatan K3 & Utility) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan bel"] || ""]);
 
-      return sectionData;
+      sesuaiData.push([""]);
+      sesuaiData.push([""]);
+
+      tidakSesuaiData.push([""]);
+      tidakSesuaiData.push([""]);
+
+      tidakAdaItemData.push([""]);
+      tidakAdaItemData.push([""]);
+
+      return {
+        sectionData,
+        sesuaiData,
+        tidakSesuaiData,
+        tidakAdaItemData,
+      };
     });
 
-    const combined = newSheets.flatMap((sheet) => [...sheet, [""]]);
+    const semuaSectionData = newSheets.flatMap(sheet => [...sheet.sectionData, [""]]);
+    const semuaSesuaiData = newSheets.flatMap(sheet => sheet.sesuaiData);
+    const semuaTidakSesuaiData = newSheets.flatMap(sheet => sheet.tidakSesuaiData);
+    const semuaTidakAdaItemData = newSheets.flatMap(sheet => sheet.tidakAdaItemData);
 
-    const ws = XLSX.utils.aoa_to_sheet(combined);
     const wb = XLSX.utils.book_new();
+
+    const ws = XLSX.utils.aoa_to_sheet(semuaSectionData);
     XLSX.utils.book_append_sheet(wb, ws, "Form");
+
+    const wsSesuai = XLSX.utils.aoa_to_sheet(semuaSesuaiData);
+    XLSX.utils.book_append_sheet(wb, wsSesuai, "Sesuai");
+    
+    const wsTidakSesuai = XLSX.utils.aoa_to_sheet(semuaTidakSesuaiData);
+    XLSX.utils.book_append_sheet(wb, wsTidakSesuai, "Tidak Sesuai");
+ 
+    const wsTidakAdaItem = XLSX.utils.aoa_to_sheet(semuaTidakAdaItemData);
+    XLSX.utils.book_append_sheet(wb, wsTidakAdaItem, "Tidak Ada Item");
+
 
     const fileName = `FormSelfSurveyPeralatanK3_${statusGedung}_${namaGedung}.xlsx`;
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
