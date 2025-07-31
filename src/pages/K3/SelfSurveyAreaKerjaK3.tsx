@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 import { generateSelfSurveyAreaKerjaK3, type GeneratedFile } from "../../logic/K3Logic";
 import type { ExcelRow } from "../../variable/variable";
 import { useState } from "react";
+import { renderTablePreview } from "./AreaKerjaPreview";
 
 function SelfSurveyAreaKerjaK3(){
     //Set upload varaible and generated file
@@ -28,6 +29,18 @@ function SelfSurveyAreaKerjaK3(){
 
                     const files = generateSelfSurveyAreaKerjaK3(jsonData);
                     setGeneratedFiles(files);
+
+                    const firstSheetRaw = files?.[0]?.previewData;
+
+                    if (firstSheetRaw) {
+                    const previewSafe = firstSheetRaw.map((row) =>
+                        row.map((cell) =>
+                        typeof cell === "object" && cell !== null && "f" in cell ? `=${cell.f}` : cell
+                        )
+                    );
+                    renderTablePreview(previewSafe);
+                    }
+                
                 
                     onSuccess?.("ok");
                 };
@@ -69,7 +82,7 @@ function SelfSurveyAreaKerjaK3(){
                     </p>
                 </Dragger>
             </Container>
-
+            <div id="previewTable" style={{ marginTop: "20px", backgroundColor: "#fff", padding: "1rem" }} />
             {generatedFiles.length > 0 && (
             <>
             <Text fontWeight="bold" fontSize="lg" mt={6} mb={2}>Generated Self Survey Area Kerja Files</Text>

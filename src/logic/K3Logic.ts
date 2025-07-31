@@ -1,6 +1,7 @@
 import * as XLSX from "xlsx";
 
 type ExcelRow = Record<string, any>;
+type ExcelCell = string | null | { f: string };
 
 //This variable are used to set GeneratedFile 
 export interface GeneratedFile {
@@ -8,6 +9,7 @@ export interface GeneratedFile {
   namaGedung: string;
   fileName: string;
   blob: Blob;
+  previewData?: ExcelCell[][];
 }
 
 //This variable are used to normalize or clean the row
@@ -352,7 +354,13 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const blob = new Blob([wbout], { type: "application/octet-stream" });
 
-    generatedFiles.push({ namaGedung, fileName, blob, statusGedung });
+    generatedFiles.push({
+      namaGedung,
+      fileName,
+      blob,
+      statusGedung,
+      previewData: semuaSesuaiData 
+    });
   });
 
   return generatedFiles;
