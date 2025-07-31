@@ -145,7 +145,7 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
           tidakAdaItemData.push(["Apakah Terdapat Hydrant ?", adaHYDRANT]);
           tidakAdaItemData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", HYDRANTsesuai]);
           tidakAdaItemData.push(["Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ${suffix}`] || rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi`]]);
-          tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", 
+          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", 
             rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`] || 
             rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas`] || 
             rowClean[`Lampirkan dokumentasi foto Hydrant yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]  || 
@@ -426,11 +426,11 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["Apakah terdapat AED ?", rowClean["Apakah terdapat AED"] || ""]);
         tidakAdaItemData.push(["Lantai dimana AED berada ?", rowClean["Lantai dimana AED berada"] || ""]);
         tidakAdaItemData.push(["Area / Unit Kerja dimana AED berada ?", rowClean["Area / Unit Kerja dimana AED berada"] || ""]);
-        tidakAdaItemData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"] || ""]);
+        tidakAdaItemData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh..."] || ""]);
         tidakAdaItemData.push(["Dari standar AED di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar AED di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto AED yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto AED yang berada di gedung ini"] || ""]);
       } else if (AdaAED === "Ya"){
-        const AEDSesuai = rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"];
+        const AEDSesuai = rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh..."];
 
         if(AEDSesuai === "Tidak"){
           //AED Question
@@ -439,7 +439,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           tidakSesuaiData.push(["Apakah terdapat AED ?", rowClean["Apakah terdapat AED"] || ""]);
           tidakSesuaiData.push(["Lantai dimana AED berada ?", rowClean["Lantai dimana AED berada"] || ""]);
           tidakSesuaiData.push(["Area / Unit Kerja dimana AED berada ?", rowClean["Area / Unit Kerja dimana AED berada"] || ""]);
-          tidakSesuaiData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"] || ""]);
+          tidakSesuaiData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh..."] || ""]);
           tidakSesuaiData.push(["Dari standar AED di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar AED di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto AED yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto AED yang berada di gedung ini"] || ""]);
         } else if (AEDSesuai === "Ya"){
@@ -449,7 +449,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["Apakah terdapat AED ?", rowClean["Apakah terdapat AED"] || ""]);
           sesuaiData.push(["Lantai dimana AED berada ?", rowClean["Lantai dimana AED berada"] || ""]);
           sesuaiData.push(["Area / Unit Kerja dimana AED berada ?", rowClean["Area / Unit Kerja dimana AED berada"] || ""]);
-          sesuaiData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta"] || ""]);
+          sesuaiData.push(["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh sta", rowClean["Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh..."] || ""]);
           sesuaiData.push(["Dari standar AED di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar AED di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto AED yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto AED yang berada di gedung ini"] || ""]);
         }
@@ -502,11 +502,11 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["Apakah terdapat Tabung Oksigen ?", rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"] || ""]);
         tidakAdaItemData.push(["Lantai dimana tabung oksigen berada ?", rowClean["Lantai dimana tabung oksigen berada"] || ""]);
         tidakAdaItemData.push(["Area / Unit Kerja dimana tabung oksigen berada ?", rowClean["Area / Unit Kerja dimana tabung oksigen berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] || ""]);
+        tidakAdaItemData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang be..."] || ""]);
         tidakAdaItemData.push(["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"] || ""]);
       } else if (AdaOksigen === "Ya "){
-        const OksigenSesuai = rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] ;
+        const OksigenSesuai = rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang be..."] ;
 
         if(OksigenSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
@@ -514,7 +514,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           tidakSesuaiData.push(["Apakah terdapat Tabung Oksigen ?", rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"] || ""]);
           tidakSesuaiData.push(["Lantai dimana tabung oksigen berada ?", rowClean["Lantai dimana tabung oksigen berada"] || ""]);
           tidakSesuaiData.push(["Area / Unit Kerja dimana tabung oksigen berada ?", rowClean["Area / Unit Kerja dimana tabung oksigen berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] || ""]);
+          tidakSesuaiData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang be..."] || ""]);
           tidakSesuaiData.push(["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"] || ""]);
         } else if (OksigenSesuai === "Ya"){
@@ -523,7 +523,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["Apakah terdapat Tabung Oksigen ?", rowClean["Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"] || ""]);
           sesuaiData.push(["Lantai dimana tabung oksigen berada ?", rowClean["Lantai dimana tabung oksigen berada"] || ""]);
           sesuaiData.push(["Area / Unit Kerja dimana tabung oksigen berada ?", rowClean["Area / Unit Kerja dimana tabung oksigen berada"] || ""]);
-          sesuaiData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang berada"] || ""]);
+          sesuaiData.push(["Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang be..."] || ""]);
           sesuaiData.push(["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"] || ""]);
         }
@@ -537,18 +537,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----Ruang Menyusui---"]);
         tidakAdaItemData.push(["Apakah terdapat Ruang Menyusui/Ruang Laktasi ?", rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"] || ""]);
         tidakAdaItemData.push(["Lantai dimana Ruang Menyusui berada ?", rowClean["Lantai dimana Ruang Menyusui berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. R..."] || ""]);
         tidakAdaItemData.push(["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"] || ""]);
       } else if (AdaMenyusui === "Ya"){
-        const MenyusuiSesuai = rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"];
+        const MenyusuiSesuai = rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. R..."];
 
         if(MenyusuiSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Ruang Menyusui---"]);
           tidakSesuaiData.push(["Apakah terdapat Ruang Menyusui/Ruang Laktasi ?", rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"] || ""]);
           tidakSesuaiData.push(["Lantai dimana Ruang Menyusui berada ?", rowClean["Lantai dimana Ruang Menyusui berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. R..."] || ""]);
           tidakSesuaiData.push(["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"] || ""]);
         } else if (MenyusuiSesuai === "Ya"){
@@ -556,7 +556,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----Ruang Menyusui---"]);
           sesuaiData.push(["Apakah terdapat Ruang Menyusui/Ruang Laktasi ?", rowClean["Apakah terdapat Ruang Menyusui/Ruang Laktasi"] || ""]);
           sesuaiData.push(["Lantai dimana Ruang Menyusui berada ?", rowClean["Lantai dimana Ruang Menyusui berada"] || ""]);
-          sesuaiData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. Ruang"] || ""]);
+          sesuaiData.push(["Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. R..."] || ""]);
           sesuaiData.push(["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"] || ""]);
         }
@@ -570,18 +570,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----Ruang Mesin Lift---"]);
         tidakAdaItemData.push(["Apakah terdapat Ruang Mesin Lift ?", rowClean["Apakah terdapat Ruang Mesin Lift"] || ""]);
         tidakAdaItemData.push(["Lantai dimana Ruang Mesin Lift berada ?", rowClean["Lantai dimana Ruang Mesin Lift berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat AP..."] || ""]);
         tidakAdaItemData.push(["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"] || ""]);
       } else if (AdaRuangMesin === "Ya"){
-        const RuangMesinSesuai = rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"];
+        const RuangMesinSesuai = rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat AP..."];
 
         if(RuangMesinSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Ruang Mesin Lift---"]);
           tidakSesuaiData.push(["Apakah terdapat Ruang Mesin Lift ?", rowClean["Apakah terdapat Ruang Mesin Lift"] || ""]);
           tidakSesuaiData.push(["Lantai dimana Ruang Mesin Lift berada ?", rowClean["Lantai dimana Ruang Mesin Lift berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat AP..."] || ""]);
           tidakSesuaiData.push(["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"] || ""]);
         } else if (RuangMesinSesuai === "Ya"){
@@ -589,7 +589,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----Ruang Mesin Lift---"]);
           sesuaiData.push(["Apakah terdapat Ruang Mesin Lift ?", rowClean["Apakah terdapat Ruang Mesin Lift"] || ""]);
           sesuaiData.push(["Lantai dimana Ruang Mesin Lift berada ?", rowClean["Lantai dimana Ruang Mesin Lift berada"] || ""]);
-          sesuaiData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat APAR s"] || ""]);
+          sesuaiData.push(["Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat AP..."] || ""]);
           sesuaiData.push(["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"] || ""]);
         }
@@ -603,18 +603,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----Ruang Pompa---"]);
         tidakAdaItemData.push(["Apakah terdapat Ruang Pompa ?", rowClean["Apakah terdapat Ruang Pompa"] || ""]);
         tidakAdaItemData.push(["Lantai dimana Ruang Pompa berada ?", rowClean["Lantai dimana Ruang Pompa berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai den..."] || ""]);
         tidakAdaItemData.push(["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Pompa di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Pompa di gedung ini"] || ""]);
       } else if (AdaRuangPompa === "Ya"){
-        const RuangPompaSesuai = rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"];
+        const RuangPompaSesuai = rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai den..."];
 
         if(RuangPompaSesuai === "Tidak") {
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Ruang Pompa---"]);
           tidakSesuaiData.push(["Apakah terdapat Ruang Pompa ?", rowClean["Apakah terdapat Ruang Pompa"] || ""]);
           tidakSesuaiData.push(["Lantai dimana Ruang Pompa berada ?", rowClean["Lantai dimana Ruang Pompa berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai den..."] || ""]);
           tidakSesuaiData.push(["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Pompa di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Pompa di gedung ini"] || ""]);
         } else if (RuangPompaSesuai === "Ya"){
@@ -623,7 +623,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----Ruang Pompa---"]);
           sesuaiData.push(["Apakah terdapat Ruang Pompa ?", rowClean["Apakah terdapat Ruang Pompa"] || ""]);
           sesuaiData.push(["Lantai dimana Ruang Pompa berada ?", rowClean["Lantai dimana Ruang Pompa berada"] || ""]);
-          sesuaiData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai dengan"] || ""]);
+          sesuaiData.push(["Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai den..."] || ""]);
           sesuaiData.push(["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Ruang Pompa di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Pompa di gedung ini"] || ""]);
         }
@@ -637,18 +637,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----Ruang Genset---"]);
         tidakAdaItemData.push(["Apakah terdapat Ruang Genset ?", rowClean["Apakah terdapat Ruang Genset"] || ""]);
         tidakAdaItemData.push(["Lantai dimana Ruang Genset berada ?", rowClean["Lantai dimana Ruang Genset berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area..."] || ""]);
         tidakAdaItemData.push(["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Genset di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Genset di gedung ini"] || ""]);
       } else if (AdaRuangGenset === "Ya"){
-        const RuangGensetSesuai = rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"];
+        const RuangGensetSesuai = rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area..."];
 
         if(RuangGensetSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Ruang Genset---"]);
           tidakSesuaiData.push(["Apakah terdapat Ruang Genset ?", rowClean["Apakah terdapat Ruang Genset"] || ""]);
           tidakSesuaiData.push(["Lantai dimana Ruang Genset berada ?", rowClean["Lantai dimana Ruang Genset berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area..."] || ""]);
           tidakSesuaiData.push(["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Genset di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Genset di gedung ini"] || ""]);
         } else if (RuangGensetSesuai === "Ya"){
@@ -656,7 +656,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----Ruang Genset---"]);
           sesuaiData.push(["Apakah terdapat Ruang Genset ?", rowClean["Apakah terdapat Ruang Genset"] || ""]);
           sesuaiData.push(["Lantai dimana Ruang Genset berada ?", rowClean["Lantai dimana Ruang Genset berada"] || ""]);
-          sesuaiData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area rua"] || ""]);
+          sesuaiData.push(["Apakah Ruang genset memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area..."] || ""]);
           sesuaiData.push(["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Ruang Genset di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Genset di gedung ini"] || ""]);
         }
@@ -669,18 +669,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----Ruang Trafo---"]);
         tidakAdaItemData.push(["Apakah terdapat Ruang Trafo ?", rowClean["Apakah terdapat Ruang Trafo"] || ""]);
         tidakAdaItemData.push(["Lantai dimana Ruang Trafo berada ?", rowClean["Lantai dimana Ruang Trafo berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"] || ""]);
+        tidakAdaItemData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area r..."] || ""]);
         tidakAdaItemData.push(["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Ruang Trafo di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Trafo di gedung ini"] || ""]);
       } else if (AdaRuangTrafo === "Ya"){
-        const RuangTrafoSesuai = rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"]; 
+        const RuangTrafoSesuai = rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area r..."]; 
 
         if(RuangTrafoSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Ruang Trafo---"]);
           tidakSesuaiData.push(["Apakah terdapat Ruang Trafo ?", rowClean["Apakah terdapat Ruang Trafo"] || ""]);
           tidakSesuaiData.push(["Lantai dimana Ruang Trafo berada ?", rowClean["Lantai dimana Ruang Trafo berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"] || ""]);
+          tidakSesuaiData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area r..."] || ""]);
           tidakSesuaiData.push(["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Ruang Trafo di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Trafo di gedung ini"] || ""]);
         } else if (RuangTrafoSesuai === "Ya"){
@@ -688,7 +688,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----Ruang Trafo---"]);
           sesuaiData.push(["Apakah terdapat Ruang Trafo ?", rowClean["Apakah terdapat Ruang Trafo"] || ""]);
           sesuaiData.push(["Lantai dimana Ruang Trafo berada ?", rowClean["Lantai dimana Ruang Trafo berada"] || ""]);
-          sesuaiData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area ruang"] || ""]);
+          sesuaiData.push(["Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area r..."] || ""]);
           sesuaiData.push(["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Ruang Trafo di gedung ini", rowClean["Lampirkan dokumentasi foto Ruang Trafo di gedung ini"] || ""]);
         }
@@ -702,19 +702,19 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----Tangki Timbun---"]);
         tidakAdaItemData.push(["Apakah terdapat Tangki Timbun ?", rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"] || ""]);
         tidakAdaItemData.push(["Lantai dimana Tangki Timbun berada ?", rowClean["Lantai dimana Tangki Timbun berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"] || ""]);
+        tidakAdaItemData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpa..."] || ""]);
         tidakAdaItemData.push(["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Tangki Timbun di gedung ini", rowClean["Lampirkan dokumentasi foto Tangki Timbun di gedung ini"] || ""]);
       } else if (AdaTangkiTimbun === "Ya"){
 
-        const TangkiTimbunSesuai = rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"];
+        const TangkiTimbunSesuai = rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpa..."];
 
         if(TangkiTimbunSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Tangki Timbun---"]);
           tidakSesuaiData.push(["Apakah terdapat Tangki Timbun ?", rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"] || ""]);
           tidakSesuaiData.push(["Lantai dimana Tangki Timbun berada ?", rowClean["Lantai dimana Tangki Timbun berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"] || ""]);
+          tidakSesuaiData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpa..."] || ""]);
           tidakSesuaiData.push(["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Tangki Timbun di gedung ini", rowClean["Lampirkan dokumentasi foto Tangki Timbun di gedung ini"] || ""]);
 
@@ -723,7 +723,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----Tangki Timbun---"]);
           sesuaiData.push(["Apakah terdapat Tangki Timbun ?", rowClean["Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"] || ""]);
           sesuaiData.push(["Lantai dimana Tangki Timbun berada ?", rowClean["Lantai dimana Tangki Timbun berada"] || ""]);
-          sesuaiData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpakai/"] || ""]);
+          sesuaiData.push(["Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpa..."] || ""]);
           sesuaiData.push(["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Tangki Timbun di gedung ini", rowClean["Lampirkan dokumentasi foto Tangki Timbun di gedung ini"] || ""]);
           }
@@ -737,18 +737,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----MCFA---"]);
         tidakAdaItemData.push(["Apakah terdapat MCFA (Main Control Fire Alarm) ?", rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"] || ""]);
         tidakAdaItemData.push(["Lantai dimana MCFA berada ?", rowClean["Lantai dimana MCFA berada"] || ""]);
-        tidakAdaItemData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"] || ""]);
+        tidakAdaItemData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / securi..."] || ""]);
         tidakAdaItemData.push(["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto MCFA yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto MCFA yang berada di gedung ini"] || ""]);
       } else if (AdaMCFA === "Ya"){
-        const MCFASesuai = rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"];
+        const MCFASesuai = rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / securi..."];
 
         if(MCFASesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----MCFA---"]);
           tidakSesuaiData.push(["Apakah terdapat MCFA (Main Control Fire Alarm) ?", rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"] || ""]);
           tidakSesuaiData.push(["Lantai dimana MCFA berada ?", rowClean["Lantai dimana MCFA berada"] || ""]);
-          tidakSesuaiData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"] || ""]);
+          tidakSesuaiData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / securi..."] || ""]);
           tidakSesuaiData.push(["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto MCFA yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto MCFA yang berada di gedung ini"] || ""]);
         } else if (MCFASesuai === "Ya"){
@@ -756,7 +756,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----MCFA---"]);
           sesuaiData.push(["Apakah terdapat MCFA (Main Control Fire Alarm) ?", rowClean["Apakah terdapat MCFA (Main Control Fire Alarm)"] || ""]);
           sesuaiData.push(["Lantai dimana MCFA berada ?", rowClean["Lantai dimana MCFA berada"] || ""]);
-          sesuaiData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / security y"] || ""]);
+          sesuaiData.push(["Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / securi..."] || ""]);
           sesuaiData.push(["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto MCFA yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto MCFA yang berada di gedung ini"] || ""]);
         }
@@ -769,18 +769,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push(["----Mesin Paging---"]);
         tidakAdaItemData.push(["Apakah terdapat Mesin Paging ?", rowClean["Apakah terdapat Mesin Paging"] || ""]);
         tidakAdaItemData.push(["Lantai dimana Mesin Paging berada ?", rowClean["Lantai dimana Mesin Paging berada"] || ""]);
-        tidakAdaItemData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"] || ""]);
+        tidakAdaItemData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan ..."] || ""]);
         tidakAdaItemData.push(["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"] || ""]);
       } else if (AdaMesinPaging === "Ya"){
-        const MesinPagingSesuai = rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"];
+        const MesinPagingSesuai = rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan ..."];
 
         if(MesinPagingSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Mesin Paging---"]);
           tidakSesuaiData.push(["Apakah terdapat Mesin Paging ?", rowClean["Apakah terdapat Mesin Paging"] || ""]);
           tidakSesuaiData.push(["Lantai dimana Mesin Paging berada ?", rowClean["Lantai dimana Mesin Paging berada"] || ""]);
-          tidakSesuaiData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"] || ""]);
+          tidakSesuaiData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan ..."] || ""]);
           tidakSesuaiData.push(["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"] || ""]);
         } else if (MesinPagingSesuai === "Ya"){
@@ -788,7 +788,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push(["----Mesin Paging---"]);
           sesuaiData.push(["Apakah terdapat Mesin Paging ?", rowClean["Apakah terdapat Mesin Paging"] || ""]);
           sesuaiData.push(["Lantai dimana Mesin Paging berada ?", rowClean["Lantai dimana Mesin Paging berada"] || ""]);
-          sesuaiData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan Apak"] || ""]);
+          sesuaiData.push(["Apakah mesin Paging memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan ..."] || ""]);
           sesuaiData.push(["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"] || ""]);
         }
@@ -800,24 +800,24 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push([""]);
         tidakAdaItemData.push(["----Hydrant Outdoor---"]);
         tidakAdaItemData.push(["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung) ?", rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"] || ""]);
-        tidakAdaItemData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"] || ""]);
+        tidakAdaItemData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi sel..."] || ""]);
         tidakAdaItemData.push(["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"] || ""]);
       } else if (AdaHydrant === "Ya"){
-        const HydrantSesuai = rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"];
+        const HydrantSesuai = rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi sel..."];
 
         if(HydrantSesuai === "Tidak"){
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Hydrant Outdoor---"]);
           tidakSesuaiData.push(["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung) ?", rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"] || ""]);
-          tidakSesuaiData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"] || ""]);
+          tidakSesuaiData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi sel..."] || ""]);
           tidakSesuaiData.push(["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"] || ""]);
         } else if (HydrantSesuai === "Ya"){
           sesuaiData.push([""]);
           sesuaiData.push(["----Hydrant Outdoor---"]);
           sesuaiData.push(["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung) ?", rowClean["Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"] || ""]);
-          sesuaiData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi seluruh"] || ""]);
+          sesuaiData.push(["Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi sel..."] || ""]);
           sesuaiData.push(["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"] || ""]);
         }
@@ -830,18 +830,18 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
         tidakAdaItemData.push([""]);
         tidakAdaItemData.push(["----Assembly Point---"]);
         tidakAdaItemData.push(["Apakah terdapat Titik Kumpul (Assembly Point) ?", rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] || ""]);
-        tidakAdaItemData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"] || ""]);
+        tidakAdaItemData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang t..."] || ""]);
         tidakAdaItemData.push(["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"] || ""]);
         tidakAdaItemData.push(["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"] || ""]);
       } else if (AdaAssemblyPoint === "Ya"){
-        const AssemblyPointSesuai = rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"];
+        const AssemblyPointSesuai = rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang t..."];
 
         if(AssemblyPointSesuai === "Tidak"){
           //Assembly Point Question
           tidakSesuaiData.push([""]);
           tidakSesuaiData.push(["----Assembly Point---"]);
           tidakSesuaiData.push(["Apakah terdapat Titik Kumpul (Assembly Point) ?", rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] || ""]);
-          tidakSesuaiData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"] || ""]);
+          tidakSesuaiData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang t..."] || ""]);
           tidakSesuaiData.push(["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"] || ""]);
           tidakSesuaiData.push(["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"] || ""]);
         } else if (AssemblyPointSesuai === "Ya"){
@@ -849,7 +849,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
           sesuaiData.push([""]);
           sesuaiData.push(["----Assembly Point---"]);
           sesuaiData.push(["Apakah terdapat Titik Kumpul (Assembly Point) ?", rowClean["Apakah terdapat Titik Kumpul (Assembly Point)"] || ""]);
-          sesuaiData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang terte"] || ""]);
+          sesuaiData.push(["Apakah Assembly Point memenuhi seluruh standar yang tertera ?", rowClean["Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang t..."] || ""]);
           sesuaiData.push(["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?", rowClean["Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"] || ""]);
           sesuaiData.push(["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini", rowClean["Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"] || ""]);
         }
@@ -858,7 +858,7 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
       //Assessment Declaration
       sectionData.push([""]);
       sectionData.push([""]);
-      sectionData.push(["Dengan ini kami menyatakan bahwa seluruh item ini (Peralatan K3 & Utility) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan bel", rowClean["Dengan ini kami menyatakan bahwa seluruh item ini (Peralatan K3 & Utility) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan bel"] || ""]);
+      sectionData.push(["Dengan ini kami menyatakan bahwa seluruh item ini (Peralatan K3 & Utility) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan bel", rowClean["Dengan ini kami menyatakan bahwa seluruh item ini (Peralatan K3 & Utility) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan..."] || ""]);
 
       sesuaiData.push([""]);
       sesuaiData.push([""]);
