@@ -1,15 +1,37 @@
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import * as XLSX from "xlsx";
+import { questionList } from "./ListQuestionsK3";
 
 type ExcelRow = Record<string, any>;
 type ExcelCell = string | null | { f: string };
+
+export interface JsonRow {
+  field: string;
+  value: string | null;
+}
 
 //This variable are used to set GeneratedFile 
 export interface GeneratedFile {
   statusGedung: string;
   namaGedung: string;
   fileName: string;
+  tanggalPemeriksaan: string;
+  wilayah: string;
+  namaPemeriksa: string;
+  namaPendampingPemeriksa: string;
+  jumlahLantai: string;
   blob: Blob;
-  previewData?: ExcelCell[][];
+
+  previewDataSesuai?: ExcelCell[][];
+  previewDataTidakSesuai?: ExcelCell[][];
+  previewDataTidakAdaItem?: ExcelCell[][];
+
+  jsonData?: {
+    section: JsonRow[];
+    sesuai: JsonRow[];
+    tidakSesuai: JsonRow[];
+    tidakAdaItem: JsonRow[];
+  };
 }
 
 //This variable are used to normalize or clean the row
@@ -34,6 +56,35 @@ function groupByNamaGedung(data: ExcelRow[]): Record<string, ExcelRow[]> {
   return grouped;
 }
 
+function aoaToJson(data: (string | null)[][]): { field: string, value: string | null }[] {
+  return data
+    .filter(row => row.length >= 2 && row[0]) // skip row kosong
+    .map(row => ({
+      field: String(row[0]),
+      value: row[1] ?? null
+    }));
+}
+
+function cellToString(cell: string | null | { f: string }): string | null {
+  if (cell === null) return null;
+  if (typeof cell === "string") return cell;
+  if (typeof cell === "object" && "f" in cell) return `=${cell.f}`;
+  return null;
+}
+
+function cleanExcelData(data: ExcelCell[][]): (string | null)[][] {
+  return data.map(row =>
+    row.map(cell => cellToString(cell))
+  );
+}
+
+function getValueByKeys(row: Record<string, any>, keys: string[], suffix: string): string | null {
+  for (const keyTemplate of keys) {
+    const key = keyTemplate.replace("${suffix}", suffix);
+    if (row[key] !== undefined) return row[key];
+  }
+  return null;
+}
 
 //This function are used to generate self servey area kerja
 export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedFile[] {
@@ -42,6 +93,11 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
 
   Object.entries(grouped).forEach(([namaGedung, items]) => {
     const statusGedung = items[0]["Pilih Gedung (KP/Kanwil/KCU/KCP)"] || "Tanpa Status";
+    const tanggalPemeriksaan = items[0]["Tanggal Pemeriksaan"];
+    const wilayah = items[0]["Wilayah"];
+    const namaPemeriksa = items[0]["Nama Pemeriksa (Jabatan) Notes : Untuk pengisian form diharapkan diisi oleh Kabag APK"];
+    const namaPendampingPemeriksa = items[0]["Nama Pendamping Pemeriksa (Kepala Pengelola Gedung/BM) Notes: Apabila tidak memiliki Kepala Pengelola Gedung/BM dapat diisi dengan tanda \"-\""];
+    const jumlahLantai = items[0]["Jumlah Lantai (Termasuk Basement & Rooftop) yang terdapat area kerja Apabila Jumlah Lantai yang terdapat area kerja di Gedung Bapak/Ibu lebih dari 5 lantai, dapat menghubungi tim K3"];
 
     const newSheets = items.map((rowClean) => {
       type ExcelCell = string | null | {f: string};
@@ -51,9 +107,11 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
       const tidakSesuaiData: ExcelCell[][] = [];
       const tidakAdaItemData: ExcelCell[][] = [];
 
+      const namaGedung = rowClean["Nama Gedung (Contoh : Bekasi)"];
+      
       //Nama Gedung, Jumlah Lantai, and Status Gedung
       sectionData.push([""]);
-      sectionData.push(["Nama Gedung", rowClean["Nama Gedung (Contoh : Bekasi)"] || ""]);
+      sectionData.push(["Nama Gedung", namaGedung || ""]);
       sectionData.push(["Status Gedung", rowClean["Pilih Gedung (KP/Kanwil/KCU/KCP)"] || ""]);
       sectionData.push(["Jumlah Lantai",rowClean["Jumlah Lantai (Termasuk Basement & Rooftop) yang terdapat area kerja Apabila Jumlah Lantai yang terdapat area kerja di Gedung Bapak/Ibu lebih dari 5 lantai, dapat menghubungi tim K3"] || ""]);
       sectionData.push([""]);
@@ -84,35 +142,58 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
           tidakAdaItemData.push(["Area/Unit Kerja", areaKerja]);
         }
         
-        const adaAPAR = rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`];
-        const APARsesuai = rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...${suffix}`] || rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...`];
-        
-        if(adaAPAR === "Ya"){
-
-          if(APARsesuai === "Ya"){
+        questionList.forEach((category) => {
+          // Tambahkan judul kategori
+          const valueToCheck = getValueByKeys(rowClean, category.items[0].keys || [], suffix);
+          
+          if (valueToCheck === "Ya") {
             sesuaiData.push([""]);
-            sesuaiData.push(["----APAR---"]);
-            sesuaiData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`]]);
-            sesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...${suffix}`] || rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...`]]);
-            sesuaiData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi${suffix}`] || rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi,`]]);
-            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR di lantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
-          } else if (APARsesuai === "Tidak"){
-            tidakSesuaiData.push([""]);
-            tidakSesuaiData.push(["----APAR---"]);
-            tidakSesuaiData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`]]);
-            tidakSesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...${suffix}`] || rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...`]]);
-            tidakSesuaiData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi${suffix}`] || rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi,`]]);
-            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR di lantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
-          }
+            sesuaiData.push([category.category]);
 
-        } else if (adaAPAR === "Tidak") {
-          tidakAdaItemData.push([""]);
-          tidakAdaItemData.push(["----APAR---"]);
-          tidakAdaItemData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`]]);
-          tidakAdaItemData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...${suffix}`] || rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...`]]);
-          tidakAdaItemData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi${suffix}`] || rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi,`]]);
-          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto APAR di lantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
-        }
+            category.items.forEach((item) => {
+              if (item.type === "title") return;
+
+              const value = getValueByKeys(rowClean, item.keys || [], suffix);
+              if (value) {
+                sesuaiData.push([item.label, value]);
+              }
+            });
+
+          } else if (valueToCheck === "Tidak") {
+            tidakAdaItemData.push([""]);
+            tidakAdaItemData.push([category.category]);
+
+            const label = category.items.find(i => i.label.includes("Apakah terdapat"))?.label || category.category;
+            tidakAdaItemData.push([label, valueToCheck]);
+          }
+        });
+
+        // const adaAPAR = rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`];
+        // const APARsesuai = rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...${suffix}`] || rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...`];
+        
+        // if(adaAPAR === "Ya"){
+
+        //   if(APARsesuai === "Ya"){
+        //     sesuaiData.push([""]);
+        //     sesuaiData.push(["----APAR---"]);
+        //     sesuaiData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`]]);
+        //     sesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...${suffix}`] || rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...`]]);
+        //     sesuaiData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi${suffix}`] || rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi,`]]);
+        //     sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR di lantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+        //   } else if (APARsesuai === "Tidak"){
+        //     tidakSesuaiData.push([""]);
+        //     tidakSesuaiData.push(["----APAR---"]);
+        //     tidakSesuaiData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`]]);
+        //     tidakSesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...${suffix}`] || rowClean[`Berikut merupakan standar Pemasangan APAR (Permenaker 4 Tahun 1980 & Memo Logistik No 063/MO/MP/2017) 1. Setiap satu atau kelompok APAR harus ditempatkan pada posisi yang mudah dilihat dengan jel...`]]);
+        //     tidakSesuaiData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi${suffix}`] || rowClean[`Dari standar APAR di atas, kriteria mana yang belum terpenuhi,`]]);
+        //     tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR di lantai ini", rowClean[`Lampirkan 1 sampel dokumentasi foto APAR dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] || rowClean[`Lampirkan dokumentasi foto APAR yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]]);
+        //   }
+
+        // } else if (adaAPAR === "Tidak") {
+        //   tidakAdaItemData.push([""]);
+        //   tidakAdaItemData.push(["----APAR---"]);
+        //   tidakAdaItemData.push(["Apakah Terdapat APAR ?", rowClean[`Apakah terdapat APAR di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat APAR di lantai ini?`]]);
+        // }
 
         const adaHYDRANT = rowClean[`Apakah terdapat HYDRANT di lantai ini? ${suffix}`] || rowClean[`Apakah terdapat HYDRANT di lantai ini?`];
         const HYDRANTsesuai = rowClean[`Berikut merupakan standar pemasangan hydrant: 1. Hydrant dapat dilihat dengan jelas 2. Hydrant mudah untuk diakses (Tidak terhalang benda) 3. Hydrant dalam kondisi terawat dengan baik dan siap dig...${suffix}`] || rowClean[`Berikut merupakan standar pemasangan hydrant: 1. Hydrant dapat dilihat dengan jelas 2. Hydrant mudah untuk diakses (Tidak terhalang benda) 3. Hydrant dalam kondisi terawat dengan baik dan siap dig...`];
@@ -145,13 +226,6 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
           tidakAdaItemData.push([""]);
           tidakAdaItemData.push(["----HYDRANT---"]);
           tidakAdaItemData.push(["Apakah Terdapat Hydrant ?", adaHYDRANT]);
-          tidakAdaItemData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", HYDRANTsesuai]);
-          tidakAdaItemData.push(["Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ${suffix}`] || rowClean[`Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi`]]);
-          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", 
-            rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`] || 
-            rowClean[`Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini yang telah sesuai seluruh standar di atas`] || 
-            rowClean[`Lampirkan dokumentasi foto Hydrant yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`]  || 
-            rowClean[`Lampirkan dokumentasi foto Hydrant yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)`] ]);
         }
 
         const adaWARDENBOX = rowClean[`Apakah terdapat Warden Box di lantai ini?${suffix}`] || rowClean[`Apakah terdapat Warden Box di lantai ini?`];
@@ -187,9 +261,6 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
           tidakAdaItemData.push([""]);
           tidakAdaItemData.push(["----WARDEN BOX---"]);
           tidakAdaItemData.push(["Apakah Terdapat Warden Box ?", adaWARDENBOX]);
-          tidakAdaItemData.push(["Apakah Warden Box memenuhi seluruh standar yang tertera ?", WARDENBOXSesuai]);
-          tidakAdaItemData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
-          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}`] ]);
         }
 
         const adaSPRINKLER = rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?${suffix}`] || rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?`];
@@ -216,9 +287,6 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
           tidakAdaItemData.push([""]);
           tidakAdaItemData.push(["----SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR---"]);
           tidakAdaItemData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", adaSPRINKLER ]);
-          tidakAdaItemData.push(["Apakah Sprinkler/Smoke Detector/Heat Detector memenuhi seluruh standar yang tertera ?", SPRINKLERSesuai ]);
-          tidakAdaItemData.push(["Dari standar Sprinkler/Smoke Detector/Heat Detector di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Sprinkler / Smoke Detector / Heat Detector di atas, kriteria mana yang belum terpenuhi${suffix}` ] || "" ]);
-          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", rowClean[`Lampirkan dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang belum memenuhi standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum t...${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector di lantai ini yang memenuhi standar di atas${suffix}`]]);
         }
 
         const adaTANGGA = rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api ${suffix}`] || rowClean[`Apakah terdapat Tangga darurat* di area/unit kerja? *)Tangga darurat/penyelamatan adalah tangga yang terletak di dalam bangunan yang harus terpisah dari ruang-ruang lain dengan dinding tahan api${suffix}`];
@@ -246,10 +314,6 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
           tidakAdaItemData.push([""]);
           tidakAdaItemData.push(["----TANGGA DARURAT---"]);
           tidakAdaItemData.push(["Apakah Terdapat Tangga Darurat ?", adaTANGGA ]);
-          tidakAdaItemData.push(["Apakah Tangga Darurat memenuhi seluruh standar yang tertera ?", TANGGAsesuai]);
-          tidakAdaItemData.push(["Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi ?", rowClean[`Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi${suffix}`] || "" ]);
-          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini", rowClean[`Lampirkan dokumentasi foto Tangga Darurat yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini yang telah sesuai seluruh standar di atas ${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini yang telah sesuai seluruh standar di atas`]]);
-          tidakAdaItemData.push(["Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana4", rowClean[`Jika tidak terdapat tangga darurat, apakah terdapat tangga operasional atau tangga lain yang bisa digunakan untuk evakuasi dalam kondisi darurat bencana${suffix}`] || "" ]);
         }
 
         const adaRAT = rowClean[`Apakah di lantai ini terdapat Ruang Area Terbatas (R. Panel Distribusi/Hub) di area/unit kerja?${suffix}`];
@@ -275,9 +339,6 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
           tidakAdaItemData.push([""]);
           tidakAdaItemData.push(["----Ruang Area Terbatas---"]);
           tidakAdaItemData.push(["Apakah Terdapat Ruang Area Terbatas ?", adaRAT]);
-          tidakAdaItemData.push(["Apakah Ruang Area Terbatas memenuhi seluruh standar yang tertera ?", RATsesuai]);
-          tidakAdaItemData.push(["Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi ?",rowClean[`Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi${suffix}`] || ""]);
-          tidakAdaItemData.push(["Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini",rowClean[`Lampirkan dokumentasi foto Ruang Area Terbatas yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}`] || rowClean[`Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini yang telah sesuai seluruh standar di atas${suffix}`]]);
         }
 
         const adaAreaBerlindung = rowClean[`Apakah terdapat Area / Tempat Berlindung (kolong meja/safety point) di area/unit kerja yang tidak terhalang benda dan dapat digunakan menjadi tempat berlindung pada saat gempa${suffix}`];
@@ -306,12 +367,7 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
         }
 
         sesuaiData.push([""]);
-        sesuaiData.push([""]);
-
         tidakSesuaiData.push([""]);
-        tidakSesuaiData.push([""]);
-
-        tidakAdaItemData.push([""]);
         tidakAdaItemData.push([""]);
       });
 
@@ -354,12 +410,35 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const blob = new Blob([wbout], { type: "application/octet-stream" });
 
+    const cleanedSectionData = cleanExcelData(semuaSectionData);
+    const cleanedSesuaiData = cleanExcelData(semuaSesuaiData);
+    const cleanedTidakSesuaiData = cleanExcelData(semuaTidakSesuaiData);
+    const cleanedTidakAdaItemData = cleanExcelData(semuaTidakAdaItemData);
+
+    const jsonSection = aoaToJson(cleanedSectionData);
+    const jsonSesuai = aoaToJson(cleanedSesuaiData);
+    const jsonTidakSesuai = aoaToJson(cleanedTidakSesuaiData);
+    const jsonTidakAdaItem = aoaToJson(cleanedTidakAdaItemData);
+
     generatedFiles.push({
       namaGedung,
       fileName,
       blob,
       statusGedung,
-      previewData: semuaSesuaiData 
+      previewDataSesuai: semuaSesuaiData,
+      previewDataTidakAdaItem: semuaTidakAdaItemData,
+      previewDataTidakSesuai: semuaTidakSesuaiData,
+      tanggalPemeriksaan: tanggalPemeriksaan,
+      wilayah: wilayah,
+      namaPemeriksa: namaPemeriksa,
+      namaPendampingPemeriksa: namaPendampingPemeriksa,
+      jumlahLantai: jumlahLantai,
+      jsonData: {
+        section: jsonSection,
+        sesuai: jsonSesuai,
+        tidakSesuai: jsonTidakSesuai,
+        tidakAdaItem: jsonTidakAdaItem
+      }
     });
   });
 
@@ -910,9 +989,94 @@ export function generateSelfSurveyPeralatanK3(excelData: ExcelRow[]) : Generated
     const blob = new Blob([wbout], { type: "application/octet-stream" });
 
     generatedFiles.push({
-      namaGedung, fileName, blob, statusGedung
+      namaGedung,
+      fileName,
+      blob,
+      statusGedung,
+      previewDataSesuai: semuaSesuaiData,
+      previewDataTidakAdaItem: semuaTidakAdaItemData,
+      previewDataTidakSesuai: semuaTidakSesuaiData,
+      tanggalPemeriksaan: "",
+      wilayah: "",
+      namaPemeriksa: "",
+      namaPendampingPemeriksa: "",
+      jumlahLantai: ""
     });
   });
 
   return generatedFiles;
+}
+
+export async function generateSelfSurveyPDF(
+  fileName: string,
+  sectionMap: Record<string, (string | null)[][]>
+){
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+  for(const sectionName of ["Sesuai", "Tidak Sesuai", "Tidak Ada Item"]) {
+    const rows = sectionMap[sectionName];
+    if(!rows || rows.length === 0) continue;
+
+    const page = pdfDoc.addPage();
+    const {height} = page.getSize();
+    let y = height - 50;
+
+    page.drawText(`${sectionName}`, {
+      x: 50,
+      y,
+      size: 18,
+      font,
+      color: rgb(0, 0.5, 0.8),
+    });
+    y -= 30;
+
+    for(const row of rows) {
+      if(y < 100){
+        y = height - 50;
+        pdfDoc.addPage();
+      }
+
+      if(row.length === 1 && row[0]?.includes("https")){
+        try{
+          const url = row[0]!;
+          const res = await fetch(url);
+          const imgBuffer = await res.arrayBuffer();
+
+          let image;
+          if (url.endsWith(".jpg") || url.endsWith(".jpeg")) {
+            image = await pdfDoc.embedJpg(imgBuffer);
+          } else {
+            image = await pdfDoc.embedPng(imgBuffer);
+          }
+
+          const imgDims = image.scale(0.25);
+          page.drawImage(image, {
+            x: 50,
+            y: y - imgDims.height,
+            width: imgDims.width,
+            height: imgDims.height,
+          });
+          y -= imgDims.height + 10;
+        } catch (err){
+          page.drawText("[Gagal membuat gambar]", {x : 50, y, size: 10, font});
+          y -= 14;
+        }
+        continue;
+      }
+
+      const line = row.filter(Boolean).join(": ");
+      page.drawText(line, { x: 50, y, size: 10, font });
+      y -= 14;
+    }
+  }
+
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }

@@ -1,7 +1,24 @@
 type RowData = (string | null)[];
 
-function isImageUrl(url: string | null): boolean {
-    return !!url && url.startsWith("https") && /\.(jpeg|jpg|png|gif|webp|bmp|svg)$/i.test(url);
+export function cellToString(cell: string | null | { f: string }): string {
+    if (typeof cell === "string") return cell;
+    if (typeof cell === "object" && cell !== null && "f" in cell) return cell.f;
+    return "";
+}
+
+export function isImageUrl(url: string | null): boolean {
+    if (!url) return false;
+  
+    const isValidExtension = /\.(jpeg|jpg|png|gif|webp|bmp|svg)$/i.test(url);
+  
+    const isRecognizedScheme = url.startsWith("http")
+      || url.startsWith("https")
+      || url.startsWith("blob:")
+      || url.startsWith("data:")
+      || url.startsWith("file:")
+      || /^[a-zA-Z]:\\/.test(url); // match C:\Users\...
+  
+    return isRecognizedScheme && isValidExtension;
 }
 
 export function renderTablePreview(data: RowData[]): void {
@@ -31,4 +48,3 @@ export function renderTablePreview(data: RowData[]): void {
         table.appendChild(tr);
     });
 }
-

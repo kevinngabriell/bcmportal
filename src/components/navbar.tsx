@@ -16,7 +16,10 @@ const items: MenuItem[] = [
   {
     key: "CM",
     label: "Crisis Management",
-    icon: <FiAlertTriangle />
+    icon: <FiAlertTriangle />,
+    // children: [
+    //   { key: "QuizHQRP", label: "Quiz HQRP"}
+    // ]
   },
   {
     key: "K3",
@@ -41,11 +44,13 @@ function NavBar() {
             navigate("/CM");
         } else if (e.key === "SelfSurveyPeralatanK3") {
             navigate("/K3/SelfSurveyPeralatan");
+        } else if (e.key === "QuizHQRP"){
+          navigate("/CM/QuizHQRP");
         }
     };
 
     const handleHomepageClick = () => {
-        navigate("/");
+        navigate('/');
     }
 
     return (

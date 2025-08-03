@@ -1,12 +1,12 @@
-import { Button, List, message, Upload, type UploadProps } from "antd";
+import { List, message, Upload, type UploadProps } from "antd";
 import Layout from "../../components/layout";
-import { Container, Text } from "@chakra-ui/react";
-import { DownloadOutlined, InboxOutlined } from "@ant-design/icons";
+import { Button, CloseButton, Container, Dialog, IconButton, Input, Portal, Tabs, Text } from "@chakra-ui/react";
+import { FolderOpenOutlined, InboxOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
-import { generateSelfSurveyAreaKerjaK3, type GeneratedFile } from "../../logic/K3Logic";
+import { generateSelfSurveyAreaKerjaK3, type GeneratedFile } from "../../logic/K3/K3Logic";
 import type { ExcelRow } from "../../variable/variable";
 import { useState } from "react";
-import { renderTablePreview } from "./AreaKerjaPreview";
+import { cellToString, isImageUrl, renderTablePreview } from "./AreaKerjaPreview";
 
 function SelfSurveyAreaKerjaK3(){
     //Set upload varaible and generated file
@@ -30,7 +30,7 @@ function SelfSurveyAreaKerjaK3(){
                     const files = generateSelfSurveyAreaKerjaK3(jsonData);
                     setGeneratedFiles(files);
 
-                    const firstSheetRaw = files?.[0]?.previewData;
+                    const firstSheetRaw = files?.[0]?.previewDataSesuai;
 
                     if (firstSheetRaw) {
                     const previewSafe = firstSheetRaw.map((row) =>
@@ -40,7 +40,8 @@ function SelfSurveyAreaKerjaK3(){
                     );
                     renderTablePreview(previewSafe);
                     }
-                
+                    
+                    console.log(files?.[0]?.jsonData);
                 
                     onSuccess?.("ok");
                 };
@@ -82,20 +83,143 @@ function SelfSurveyAreaKerjaK3(){
                     </p>
                 </Dragger>
             </Container>
-            <div id="previewTable" style={{ marginTop: "20px", backgroundColor: "#fff", padding: "1rem" }} />
+            {/* <div id="previewTable" style={{ marginTop: "20px", backgroundColor: "#fff", padding: "1rem" }} /> */}
             {generatedFiles.length > 0 && (
             <>
             <Text fontWeight="bold" fontSize="lg" mt={6} mb={2}>Generated Self Survey Area Kerja Files</Text>
                 <List
                     bordered
                     dataSource={generatedFiles}
-                    style={{ backgroundColor: "white" }}
+                    // style={{ backgroundColor: "white" }}
                     renderItem={(file) => (
                         <List.Item
                             actions={[
-                                <Button type="link" icon={<DownloadOutlined />} onClick={() => handleDownload(file)}>
-                                    Download
-                                </Button>
+                                <Dialog.Root>
+                                    <Dialog.Trigger asChild>
+                                       <IconButton aria-label="Open Details"p={"3"}><FolderOpenOutlined/> Open</IconButton>
+                                    </Dialog.Trigger>
+                                    <Portal>
+                                        <Dialog.Backdrop/>
+                                        <Dialog.Positioner>
+                                            <Dialog.Content minW="900px">
+                                                <Dialog.Header display={"flex"} flexDirection={"column"}>
+                                                    <Dialog.Title color={"black"}>{file.statusGedung} {file.namaGedung}</Dialog.Title>
+                                                    <Dialog.Description>
+                                                        <Text fontSize={"0.7rem"}>Wilayah : {file.wilayah}</Text>
+                                                        <Text fontSize={"0.7rem"}>Jumlah Lantai : {file.jumlahLantai} Lantai</Text>
+                                                        <Text fontSize={"0.7rem"}>Tanggal Pemeriksaan : {file.tanggalPemeriksaan}</Text>
+                                                        <Text fontSize={"0.7rem"}>Nama Pemeriksa : {file.namaPemeriksa}</Text>
+                                                        <Text fontSize={"0.7rem"}>Nama Pendamping Pemeriksa : {file.namaPendampingPemeriksa}</Text>
+                                                    </Dialog.Description>
+                                                </Dialog.Header>
+                                                <Dialog.Body>
+                                                    <Tabs.Root defaultValue="sesuai">
+                                                        <Tabs.List bg={"white"}>
+                                                            <Tabs.Trigger value="sesuai" bg={"white"} outline={"none"}>
+                                                                Data Sesuai
+                                                            </Tabs.Trigger>
+                                                            <Tabs.Trigger value="tidaksesuai" bg={"white"}>
+                                                                Data Tidak Sesuai
+                                                            </Tabs.Trigger>
+                                                            <Tabs.Trigger value="tidakadaitem" bg={"white"}>
+                                                                Tidak Ada Item
+                                                            </Tabs.Trigger>
+                                                        </Tabs.List>
+                                                        <Tabs.Content value="sesuai">
+                                                            <div
+                                                                style={{
+                                                                maxHeight: "300px",
+                                                                overflowY: "auto",
+                                                                overflowX: "hidden",
+                                                                color: "black",
+                                                                }}
+                                                            >
+                                                                {file.jsonData?.sesuai.map((row, i) => {
+                                                                const isImage = isImageUrl(row.value ?? "");
+                                                                return (
+                                                                    <div
+                                                                    key={i}
+                                                                    style={{
+                                                                        display: "flex",
+                                                                        alignItems: "flex-start",
+                                                                        marginBottom: "12px",
+                                                                    }}
+                                                                    >
+                                                                    <div style={{ width: "40%", fontWeight: "bold", paddingRight: 10 }}>
+                                                                        {row.field}
+                                                                    </div>
+                                                                    <div style={{ width: "60%" }}>
+                                                                        {isImage ? (
+                                                                        <img
+                                                                            src={row.value ?? ""}
+                                                                            alt="Preview"
+                                                                            style={{ maxWidth: 400 }}
+                                                                        />
+                                                                        ) : (
+                                                                        <input
+                                                                            type="text"
+                                                                            value={row.value ?? ""}
+                                                                            readOnly
+                                                                            style={{
+                                                                            width: "100%",
+                                                                            padding: "4px 8px",
+                                                                            backgroundColor: "#f5f5f5",
+                                                                            border: "1px solid #ccc",
+                                                                            borderRadius: 4,
+                                                                            }}
+                                                                        />
+                                                                        )}
+                                                                    </div>
+                                                                    </div>
+                                                                );
+                                                                })}
+                                                            </div>
+                                                            </Tabs.Content>
+                                                        <Tabs.Content value="tidaksesuai">
+                                                        <div style={{ maxHeight: "300px", overflowY: "auto", overflowX: "hidden", color: "black" }}>
+                                                            {file.previewDataTidakSesuai?.map((row, i) => (
+                                                                <div key={i}>
+                                                                    {row.map((cell, j) => {
+                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
+                                                                    if (isImageUrl(cellStr)) {
+                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
+                                                                    } else {
+                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
+                                                                    }
+                                                                    })}
+                                                                </div>
+                                                                ))}
+                                                            </div>
+                                                        </Tabs.Content>
+                                                        <Tabs.Content value="tidakadaitem">
+                                                        <div style={{ maxHeight: "300px", overflowY: "auto", overflowX: "hidden", color:'black' }}>
+                                                            {file.previewDataTidakAdaItem?.map((row, i) => (
+                                                                <div key={i}>
+                                                                    {row.map((cell, j) => {
+                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
+                                                                    if (isImageUrl(cellStr)) {
+                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
+                                                                    } else {
+                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
+                                                                    }
+                                                                    })}
+                                                                </div>
+                                                                ))}
+                                                            </div>
+                                                        </Tabs.Content>
+                                                    </Tabs.Root>
+                                                    {/* <div id="previewTable" style={{ marginTop: "20px", backgroundColor: "#fff", padding: "1rem" }} /> */}
+                                                </Dialog.Body>
+                                                <Dialog.Footer>
+                                                    <Button onClick={() => handleDownload(file)} color={"black"}>Download as Excel</Button>
+                                                </Dialog.Footer>
+                                                <Dialog.CloseTrigger asChild>
+                                                    <CloseButton size="sm" />
+                                                </Dialog.CloseTrigger>
+                                            </Dialog.Content>
+                                        </Dialog.Positioner>
+                                    </Portal>
+                                </Dialog.Root>
                             ]}
                         >
                         {file.fileName}

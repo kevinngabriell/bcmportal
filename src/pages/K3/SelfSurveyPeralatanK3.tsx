@@ -1,11 +1,12 @@
-import { Button, List, message, Upload, type UploadProps } from "antd";
-import { generateSelfSurveyPeralatanK3, type GeneratedFile } from "../../logic/K3Logic";
+import { List, message, Upload, type UploadProps } from "antd";
+import { generateSelfSurveyPeralatanK3, type GeneratedFile } from "../../logic/K3/K3Logic";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import type { ExcelRow } from "../../variable/variable";
 import Layout from "../../components/layout";
-import { Container, Text } from "@chakra-ui/react";
-import { DownloadOutlined, InboxOutlined } from "@ant-design/icons";
+import { Button, CloseButton, Container, Dialog, IconButton, Portal, Tabs, Text } from "@chakra-ui/react";
+import { FolderOpenOutlined, InboxOutlined } from "@ant-design/icons";
+import { cellToString, isImageUrl } from "./AreaKerjaPreview";
 
 function SelfSurveyPeralatanK3(){
     //Set upload varaible and generated file
@@ -80,9 +81,91 @@ function SelfSurveyPeralatanK3(){
                     renderItem={(file) => (
                         <List.Item
                             actions={[
-                                <Button type="link" icon={<DownloadOutlined />} onClick={() => handleDownload(file)}>
-                                    Download
-                                </Button>
+                                <Dialog.Root>
+                                    <Dialog.Trigger asChild>
+                                       <IconButton aria-label="Open Details" color={"black"} p={"3"}><FolderOpenOutlined/> Open</IconButton>
+                                    </Dialog.Trigger>
+                                    <Portal>
+                                        <Dialog.Backdrop/>
+                                        <Dialog.Positioner>
+                                            <Dialog.Content minW="900px">
+                                                <Dialog.Header>
+                                                    <Dialog.Title>{file.statusGedung} {file.namaGedung}</Dialog.Title>
+                                                </Dialog.Header>
+                                                <Dialog.Body>
+                                                    <Tabs.Root defaultValue="sesuai">
+                                                        <Tabs.List bg={"white"}>
+                                                            <Tabs.Trigger value="sesuai" bg={"white"} outline={"none"}>
+                                                                Data Sesuai
+                                                            </Tabs.Trigger>
+                                                            <Tabs.Trigger value="tidaksesuai" bg={"white"}>
+                                                                Data Tidak Sesuai
+                                                            </Tabs.Trigger>
+                                                            <Tabs.Trigger value="tidakadaitem" bg={"white"}>
+                                                                Tidak Ada Item
+                                                            </Tabs.Trigger>
+                                                        </Tabs.List>
+                                                        <Tabs.Content value="sesuai">
+                                                            <div style={{ maxHeight: "400px", overflowY: "auto", overflowX: "hidden" }}>
+                                                                {file.previewDataSesuai?.map((row, i) => (
+                                                                <div key={i}>
+                                                                    {row.map((cell, j) => {
+                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
+                                                                    if (isImageUrl(cellStr)) {
+                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
+                                                                    } else {
+                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
+                                                                    }
+                                                                    })}
+                                                                </div>
+                                                                ))}
+                                                            </div>
+                                                        </Tabs.Content>
+                                                        <Tabs.Content value="tidaksesuai">
+                                                        <div style={{ maxHeight: "400px", overflowY: "auto", overflowX: "hidden" }}>
+                                                            {file.previewDataTidakSesuai?.map((row, i) => (
+                                                                <div key={i}>
+                                                                    {row.map((cell, j) => {
+                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
+                                                                    if (isImageUrl(cellStr)) {
+                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
+                                                                    } else {
+                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
+                                                                    }
+                                                                    })}
+                                                                </div>
+                                                                ))}
+                                                            </div>
+                                                        </Tabs.Content>
+                                                        <Tabs.Content value="tidakadaitem">
+                                                        <div style={{ maxHeight: "400px", overflowY: "auto", overflowX: "hidden" }}>
+                                                            {file.previewDataTidakAdaItem?.map((row, i) => (
+                                                                <div key={i}>
+                                                                    {row.map((cell, j) => {
+                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
+                                                                    if (isImageUrl(cellStr)) {
+                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
+                                                                    } else {
+                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
+                                                                    }
+                                                                    })}
+                                                                </div>
+                                                                ))}
+                                                            </div>
+                                                        </Tabs.Content>
+                                                    </Tabs.Root>
+                                                    {/* <div id="previewTable" style={{ marginTop: "20px", backgroundColor: "#fff", padding: "1rem" }} /> */}
+                                                </Dialog.Body>
+                                                <Dialog.Footer>
+                                                    <Button onClick={() => handleDownload(file)} color={"black"}>Download as Excel</Button>
+                                                </Dialog.Footer>
+                                                <Dialog.CloseTrigger asChild>
+                                                    <CloseButton size="sm" />
+                                                </Dialog.CloseTrigger>
+                                            </Dialog.Content>
+                                        </Dialog.Positioner>
+                                    </Portal>
+                                </Dialog.Root>
                             ]}
                         >
                         {file.fileName}
