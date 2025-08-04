@@ -1,58 +1,11 @@
-function getWardenBoxValueBySuffix(row: Record<string, any>, suffix: string): string | null {
-  const keyMap: Record<string, string> = {
+{
+  type: "question",
+  label: "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+  keyMapBySuffix: {
     "0": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...",
     "2": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...",
     "3": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Ap...",
     "4": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...2",
-    "5": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...3"
-  };
-
-  const key = keyMap[suffix];
-  if (!key) return null;
-  return row[key] ?? null;
-}
-
-function findFirstAvailableValue(
-  row: Record<string, any>,
-  keys: string[],
-  suffix: string
-): string | null {
-  // Handling khusus untuk Warden Box
-  if (keys.length === 1 && keys[0] === "__WARDENBOX__") {
-    return getWardenBoxValueBySuffix(row, suffix);
+    "5": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...3",
   }
-
-  for (const key of keys) {
-    const fullKey = `${key} ${suffix}`.trim();
-    if (row[fullKey] != null && row[fullKey] !== "") {
-      return row[fullKey];
-    }
-    if (row[key] != null && row[key] !== "") {
-      return row[key];
-    }
-  }
-
-  return null;
 }
-
-export interface QuestionItem {
-  type: "title" | "question";
-  label: string;
-  keys?: string[];
-  followUpsIfYes?: QuestionItem[];
-  followUpsIfNo?: QuestionItem[];
-  activeForSuffixes?: string[]; // <--- ini
-}
-
-export const questionList: QuestionCategory[] = [
-  {
-    category: "WARDEN BOX",
-    items: [
-      {
-        type: "question",
-        label: "Apakah Warden Box memenuhi seluruh standar yang tertera?",
-        keys: ["__WARDENBOX__"] // ini keyword spesial
-      }
-    ]
-  }
-];
