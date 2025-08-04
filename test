@@ -1,3 +1,56 @@
+
+export interface JsonRow {
+  field: string;
+  value: string | null;
+  type: string;
+}
+
+//This variable are used to set GeneratedFile 
+export interface GeneratedFile {
+  statusGedung: string;
+  namaGedung: string;
+  fileName: string;
+  tanggalPemeriksaan: string;
+  wilayah: string;
+  namaPemeriksa: string;
+  namaPendampingPemeriksa: string;
+  jumlahLantai: string;
+  blob: Blob;
+
+  previewDataSesuai?: ExcelCell[][];
+  previewDataTidakSesuai?: ExcelCell[][];
+  previewDataTidakAdaItem?: ExcelCell[][];
+
+  jsonData?: {
+    section: JsonRow[];
+    sesuai: JsonRow[];
+    tidakSesuai: JsonRow[];
+    tidakAdaItem: JsonRow[];
+  };
+}
+
+//This variable are used to normalize or clean the row
+function normalizeHeader(row: ExcelRow): ExcelRow {
+  const normalized: ExcelRow = {};
+  Object.entries(row).forEach(([key, value]) => {
+    const cleanKey = key.replace(/\s+/g, " ").trim();
+    normalized[cleanKey] = value;
+  });
+  return normalized;
+}
+
+//This variable are used to group sheets by nama gedung
+function groupByNamaGedung(data: ExcelRow[]): Record<string, ExcelRow[]> {
+  const grouped: Record<string, ExcelRow[]> = {};
+  (data || []).forEach((row) => {
+    const normalizedRow = normalizeHeader(row);
+    const namaGedung = normalizedRow["Nama Gedung (Contoh : Bekasi)"] || "Tanpa KCU";
+    if (!grouped[namaGedung]) grouped[namaGedung] = [];
+    grouped[namaGedung].push(normalizedRow);
+  });
+  return grouped;
+}
+
 export function aoaToJson(data: (string | null)[][]): { field: string, value?: string | null, type: "title" | "question" }[] {
   return data
     .filter(row => row.length > 0 && row[0]) // skip baris kosong
@@ -15,4 +68,238 @@ export function aoaToJson(data: (string | null)[][]): { field: string, value?: s
         };
       }
     });
+}
+
+function cellToString(cell: string | null | { f: string }): string | null {
+  if (cell === null) return null;
+  if (typeof cell === "string") return cell;
+  if (typeof cell === "object" && "f" in cell) return `=${cell.f}`;
+  return null;
+}
+
+function cleanExcelData(data: ExcelCell[][]): (string | null)[][] {
+  return data.map(row =>
+    row.map(cell => cellToString(cell))
+  );
+}
+
+function findFirstAvailableValue(row: Record<string, any>, keys: string[], suffix: string): string | null {
+  for (const key of keys) {
+    const fullKey = `${key}${suffix}`.trim();
+    if (row[fullKey] != null && row[fullKey] !== "") {
+      return row[fullKey];
+    }
+    if (row[key] != null && row[key] !== "") {
+      return row[key];
+    }
+  }
+  return null;
+}
+
+function processQuestionItems(
+  items: QuestionItem[],
+  row: Record<string, any>,
+  suffix: string,
+  target: ExcelCell[][]
+) {
+  for (const item of items) {
+    if (item.type === "title") {
+      target.push([""]);
+      target.push([item.label]);
+    } else if (item.type === "question" && item.keys) {
+      const value = findFirstAvailableValue(row, item.keys, suffix);
+      target.push([item.label, value]);
+
+      if (value === "Ya" && item.followUpsIfYes) {
+        processQuestionItems(item.followUpsIfYes, row, suffix, target);
+      } else if (value === "Tidak" && item.followUpsIfNo) {
+        processQuestionItems(item.followUpsIfNo, row, suffix, target);
+      }
+    }
+  }
+}
+
+//This function are used to generate self servey area kerja
+export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedFile[] {
+  const grouped = groupByNamaGedung(excelData);
+  const generatedFiles: GeneratedFile[] = [];
+
+  Object.entries(grouped).forEach(([namaGedung, items]) => {
+    const statusGedung = items[0]["Pilih Gedung (KP/Kanwil/KCU/KCP)"] || "Tanpa Status";
+    const tanggalPemeriksaan = items[0]["Tanggal Pemeriksaan"];
+    const wilayah = items[0]["Wilayah"];
+    const namaPemeriksa = items[0]["Nama Pemeriksa (Jabatan) Notes : Untuk pengisian form diharapkan diisi oleh Kabag APK"];
+    const namaPendampingPemeriksa = items[0]["Nama Pendamping Pemeriksa (Kepala Pengelola Gedung/BM) Notes: Apabila tidak memiliki Kepala Pengelola Gedung/BM dapat diisi dengan tanda \"-\""];
+    const jumlahLantai = items[0]["Jumlah Lantai (Termasuk Basement & Rooftop) yang terdapat area kerja Apabila Jumlah Lantai yang terdapat area kerja di Gedung Bapak/Ibu lebih dari 5 lantai, dapat menghubungi tim K3"];
+
+    const newSheets = items.map((rowClean) => {
+      type ExcelCell = string | null | {f: string};
+
+      const sectionData: ExcelCell[][] = [];
+      const sesuaiData: ExcelCell[][] = [];
+      const tidakSesuaiData: ExcelCell[][] = [];
+      const tidakAdaItemData: ExcelCell[][] = [];
+
+      //Nama Gedung, Jumlah Lantai, and Status Gedung
+      sectionData.push([""]);
+      sectionData.push(["Nama Gedung", rowClean["Nama Gedung (Contoh : Bekasi)"] || ""]);
+      sectionData.push(["Status Gedung", statusGedung]);
+      sectionData.push(["Jumlah Lantai", jumlahLantai]);
+      sectionData.push([""]);
+      sectionData.push([""]);
+
+      //Set looping floor
+      const lantaiList = ["", "2", "3", "4", "5"]; 
+      
+      //Looping data for each floor
+      lantaiList.forEach((index) => {
+        //Set the suffix
+        const suffix = index ? `${index}` : " ";
+
+        const lantai = rowClean[`Lantai ${suffix}`] || rowClean[`Lantai`];
+        const areaKerja = rowClean[`Area / Unit Kerja (Apabila terdapat Unit Kerja Kantor Pusat/Kantor Wilayah/Tenant/Hub atau area yang belum terdapat pada list, dapat ditambahkan pada opsi other)${suffix}`] || rowClean[`Area / Unit Kerja (Apabila terdapat Unit Kerja Kantor Pusat/Kantor Wilayah/Tenant/Hub atau area yang belum terdapat pada list, dapat ditambahkan pada opsi other)`];
+
+        if (lantai && areaKerja) {
+          sectionData.push(["Lantai", lantai]);
+          sectionData.push(["Area/Unit Kerja", areaKerja]);
+
+          sesuaiData.push(["Lantai", lantai]);
+          sesuaiData.push(["Area/Unit Kerja", areaKerja]);
+
+          tidakSesuaiData.push(["Lantai", lantai]);
+          tidakSesuaiData.push(["Area/Unit Kerja", areaKerja]);
+
+          tidakAdaItemData.push(["Lantai", lantai]);
+          tidakAdaItemData.push(["Area/Unit Kerja", areaKerja]);
+        }
+
+        questionList.forEach((category) => {
+          const mainQuestion = category.items.find(
+            (item) => item.type === "question" && item.keys?.length
+          );
+        
+          if (!mainQuestion) return; // skip kalau ga ada question utama
+        
+          const value = findFirstAvailableValue(rowClean, mainQuestion.keys!, suffix);
+        
+          let dataTarget: ExcelCell[][];
+        
+          if (value === "Ya") {
+            // Tentukan apakah sesuai atau tidak sesuai
+            const followUp = mainQuestion.followUpsIfYes?.[0]; // asumsi pertanyaan ke-2 adalah indikator kesesuaian
+            const valueFollowUp = followUp?.keys
+              ? findFirstAvailableValue(rowClean, followUp.keys, suffix)
+              : null;
+        
+            if (valueFollowUp === "Ya") {
+              dataTarget = sesuaiData;
+            } else if (valueFollowUp === "Tidak") {
+              dataTarget = tidakSesuaiData;
+            } else {
+              dataTarget = sesuaiData; // fallback default
+            }
+          } else if (value === "Tidak") {
+            dataTarget = tidakAdaItemData;
+          } else {
+            return; // skip kalau kosong
+          }
+        
+          // Tambahkan judul kategori dan proses item
+          dataTarget.push([""]);
+          dataTarget.push([`----${category.category}---`]);
+        
+          processQuestionItems(category.items, rowClean, suffix, dataTarget);
+        });
+
+        const checkAssessment = rowClean[`Dengan ini kami menyatakan bahwa seluruh item di lantai ini (area kerja) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan belum ${suffix}`];
+
+        if(checkAssessment){
+          //Assessment Declaration
+          sectionData.push([""]);
+          sectionData.push(["Apakah Telah dilakukan assessment ?",rowClean[`Dengan ini kami menyatakan bahwa seluruh item di lantai ini (area kerja) telah dilakukan assessment sesuai dengan standar dan ketentuan yang berlaku (kecuali sejumlah item yang telah dinyatakan be...${suffix}`] || ""]);
+          sectionData.push([""]);
+        }
+
+        sesuaiData.push([""]);
+        sesuaiData.push([""]);
+
+        tidakSesuaiData.push([""]);
+        tidakSesuaiData.push([""]);
+
+        tidakAdaItemData.push([""]);
+        tidakAdaItemData.push([""]);
+      });
+
+      return {
+        sectionData,
+        sesuaiData,
+        tidakSesuaiData,
+        tidakAdaItemData,
+      };
+    });
+
+    const semuaSectionData = newSheets.flatMap(sheet => [...sheet.sectionData, [""]]);
+    const semuaSesuaiData = newSheets.flatMap(sheet => sheet.sesuaiData);
+    const semuaTidakSesuaiData = newSheets.flatMap(sheet => sheet.tidakSesuaiData);
+    const semuaTidakAdaItemData = newSheets.flatMap(sheet => sheet.tidakAdaItemData);
+
+    const wb = XLSX.utils.book_new();
+
+    if (semuaSectionData.length > 20) {
+      const ws = XLSX.utils.aoa_to_sheet(semuaSectionData);
+      XLSX.utils.book_append_sheet(wb, ws, "Form");
+    }
+
+    if (semuaSesuaiData.length > 20) {
+      const wsSesuai = XLSX.utils.aoa_to_sheet(semuaSesuaiData);
+      XLSX.utils.book_append_sheet(wb, wsSesuai, "Sesuai");
+    }
+
+    if(semuaTidakSesuaiData.length > 20){
+      const wsTidakSesuai = XLSX.utils.aoa_to_sheet(semuaTidakSesuaiData);
+      XLSX.utils.book_append_sheet(wb, wsTidakSesuai, "Tidak Sesuai");
+    }
+    
+    if (semuaTidakAdaItemData.length > 20) {
+      const wsTidakAdaItem = XLSX.utils.aoa_to_sheet(semuaTidakAdaItemData);
+      XLSX.utils.book_append_sheet(wb, wsTidakAdaItem, "Tidak Ada Item");
+    }
+
+    const fileName = `FormSelfSurveyAreaKerjaK3_${statusGedung}_${namaGedung}.xlsx`;
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
+
+    const cleanedSectionData = cleanExcelData(semuaSectionData);
+    const cleanedSesuaiData = cleanExcelData(semuaSesuaiData);
+    const cleanedTidakSesuaiData = cleanExcelData(semuaTidakSesuaiData);
+    const cleanedTidakAdaItemData = cleanExcelData(semuaTidakAdaItemData);
+
+    const jsonSection = aoaToJson(cleanedSectionData);
+    const jsonSesuai = aoaToJson(cleanedSesuaiData);
+    const jsonTidakSesuai = aoaToJson(cleanedTidakSesuaiData);
+    const jsonTidakAdaItem = aoaToJson(cleanedTidakAdaItemData);
+
+    generatedFiles.push({
+      namaGedung,
+      fileName,
+      blob,
+      statusGedung,
+      previewDataSesuai: semuaSesuaiData,
+      previewDataTidakAdaItem: semuaTidakAdaItemData,
+      previewDataTidakSesuai: semuaTidakSesuaiData,
+      tanggalPemeriksaan: tanggalPemeriksaan,
+      wilayah: wilayah,
+      namaPemeriksa: namaPemeriksa,
+      namaPendampingPemeriksa: namaPendampingPemeriksa,
+      jumlahLantai: jumlahLantai,
+      jsonData: {
+        section: jsonSection,
+        sesuai: jsonSesuai,
+        tidakSesuai: jsonTidakSesuai,
+        tidakAdaItem: jsonTidakAdaItem
+      }
+    });
+  });
+
+  return generatedFiles;
 }
