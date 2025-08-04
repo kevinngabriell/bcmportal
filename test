@@ -1,35 +1,40 @@
 AreaKerjaQuestionList.forEach((category) => {
-          const mainQuestion = category.items.find(
-            (item) => item.type === "question" && item.keys?.length
-          );
-        
-          if (!mainQuestion) return; // skip kalau ga ada question utama
-        
-          const value = getValueByKeys(rowClean, mainQuestion.keys!, suffix);
-        
-          let dataTarget: ExcelCell[][];
-        
-          if (value === "Ya") {
-            // Tentukan apakah sesuai atau tidak sesuai
-            const followUp = mainQuestion.followUpsIfYes?.[0];
-            const valueFollowUp = followUp?.keys
-              ? getValueByKeys(rowClean, followUp.keys, suffix)
-              : null;
-        
-            if (valueFollowUp === "Ya") {
-              dataTarget = sesuaiData;
-            } else if (valueFollowUp === "Tidak") {
-              dataTarget = tidakSesuaiData;
-            } else {
-              dataTarget = sesuaiData; // fallback default
-            }
-          } else if (value === "Tidak") {
-            dataTarget = tidakAdaItemData;
-          } else {
-            return; 
-          }
-        
-          dataTarget.push([""]);
-        
-          processQuestionItems(category.items, rowClean, suffix, dataTarget);
-        });
+  const mainQuestion = category.items.find(
+    (item) => item.type === "question" && item.keys?.length
+  );
+
+  if (!mainQuestion) return;
+
+  const value = getValueByKeys(rowClean, mainQuestion.keys!, suffix);
+
+  let dataTarget: ExcelCell[][];
+
+  if (value === "Ya") {
+    const followUp = mainQuestion.followUpsIfYes?.[0];
+
+    let valueFollowUp: string | null = null;
+
+    if (followUp?.keyMapBySuffix && followUp.keyMapBySuffix[suffix]) {
+      valueFollowUp = rowClean[followUp.keyMapBySuffix[suffix]] ?? null;
+    } else if (followUp?.keys) {
+      valueFollowUp = getValueByKeys(rowClean, followUp.keys, suffix);
+    }
+
+    if (valueFollowUp === "Ya") {
+      dataTarget = sesuaiData;
+    } else if (valueFollowUp === "Tidak") {
+      dataTarget = tidakSesuaiData;
+    } else {
+      dataTarget = sesuaiData;
+    }
+
+  } else if (value === "Tidak") {
+    dataTarget = tidakAdaItemData;
+  } else {
+    return;
+  }
+
+  dataTarget.push([""]);
+
+  processQuestionItems(category.items, rowClean, suffix, dataTarget);
+});
