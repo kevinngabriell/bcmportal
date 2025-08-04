@@ -1,14 +1,44 @@
-function getValueByKeys(row: Record<string, any>, keys: string[], suffix: string): string | null {
-  const allKeys = Object.keys(row);
+ AreaKerjaQuestionList.forEach((category) => {
+          const mainQuestion = category.items.find(
+            (item) => item.type === "question" && item.keys?.length
+          );
+        
+          if (!mainQuestion) return;
+        
+          const value = getValueByKeys(rowClean, mainQuestion.keys!, suffix);
+        
+          let dataTarget: ExcelCell[][];
+        
+          if (value === "Ya") {
+            const followUp = mainQuestion.followUpsIfYes?.[0];
 
-  for (const pattern of keys) {
-    const searchPattern = pattern.replace("${suffix}", suffix).toLowerCase();
+            let valueFollowUp: string | null = null;
+            
+            if (followUp?.keyMapBySuffix) {
+              console.log("suffix : " + suffix);
+              console.log(followUp);
+              valueFollowUp = rowClean[followUp.keyMapBySuffix[suffix]] ?? null;
 
-    const matchedKey = allKeys.find((k) => k.toLowerCase().includes(searchPattern));
-    if (matchedKey && row[matchedKey] !== undefined) {
-      return row[matchedKey];
-    }
-  }
-
-  return null;
-}
+              console.log(valueFollowUp);
+            } else if (followUp?.keys) {
+              valueFollowUp = getValueByKeys(rowClean, followUp.keys, suffix);
+            }
+        
+            if (valueFollowUp === "Ya") {
+              dataTarget = sesuaiData;
+            } else if (valueFollowUp === "Tidak") {
+              dataTarget = tidakSesuaiData;
+            } else {
+              dataTarget = sesuaiData;
+            }
+        
+          } else if (value === "Tidak") {
+            dataTarget = tidakAdaItemData;
+          } else {
+            return;
+          }
+        
+          dataTarget.push([""]);
+        
+          processQuestionItems(category.items, rowClean, suffix, dataTarget);
+        });
