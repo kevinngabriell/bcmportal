@@ -1,9 +1,25 @@
-console.log("🔍 resolveValueFromItem:", {
-  label: item.label,
-  suffix,
-  keyFromMap: item.keyMapBySuffix?.[suffix],
-  fallbackKeys: item.keys,
-  finalValue: item.keyMapBySuffix?.[suffix]
-    ? row[item.keyMapBySuffix[suffix]]
-    : getValueByKeys(row, item.keys ?? [], suffix)
-});
+function resolveValueFromItem(
+  item: QuestionItem,
+  row: Record<string, any>,
+  suffix: string
+): string | null {
+  let keyFromMap: string | undefined;
+  let finalValue: string | null = null;
+
+  if (item.keyMapBySuffix?.[suffix]) {
+    keyFromMap = item.keyMapBySuffix[suffix];
+    finalValue = row[keyFromMap] ?? null;
+  } else if (item.keys?.length) {
+    finalValue = getValueByKeys(row, item.keys, suffix);
+  }
+
+  console.log("🔍 resolveValueFromItem", {
+    label: item.label,
+    suffix,
+    keyFromMap,
+    fallbackKeys: item.keys,
+    finalValue,
+  });
+
+  return finalValue;
+}
