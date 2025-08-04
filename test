@@ -1,9 +1,18 @@
-function aoaToJson(data: (string | null)[][]): { field: string, value: string | null, title: string }[] {
+export function aoaToJson(data: (string | null)[][]): { field: string, value?: string | null, type: "title" | "question" }[] {
   return data
-    .filter(row => row.length >= 2 && row[0]) // skip row kosong
-    .map(row => ({
-      field: String(row[0]),
-      value: row[1] ?? null,
-      
-    }));
+    .filter(row => row.length > 0 && row[0]) // skip baris kosong
+    .map(row => {
+      if (row.length === 1 || row[1] === undefined || row[1] === null) {
+        return {
+          field: String(row[0]),
+          type: "title"
+        };
+      } else {
+        return {
+          field: String(row[0]),
+          value: row[1],
+          type: "question"
+        };
+      }
+    });
 }
