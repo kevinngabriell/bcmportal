@@ -1,44 +1,80 @@
- AreaKerjaQuestionList.forEach((category) => {
-          const mainQuestion = category.items.find(
-            (item) => item.type === "question" && item.keys?.length
-          );
-        
-          if (!mainQuestion) return;
-        
-          const value = getValueByKeys(rowClean, mainQuestion.keys!, suffix);
-        
-          let dataTarget: ExcelCell[][];
-        
-          if (value === "Ya") {
-            const followUp = mainQuestion.followUpsIfYes?.[0];
+function resolveValueFromItem(
+  item: QuestionItem,
+  row: Record<string, any>,
+  suffix: string
+): string | null {
+  if ("keyMapBySuffix" in item && item.keyMapBySuffix?.[suffix]) {
+    const actualKey = item.keyMapBySuffix[suffix];
+    if (actualKey && row[actualKey] !== undefined) {
+      return row[actualKey];
+    }
+  }
 
-            let valueFollowUp: string | null = null;
-            
-            if (followUp?.keyMapBySuffix) {
-              console.log("suffix : " + suffix);
-              console.log(followUp);
-              valueFollowUp = rowClean[followUp.keyMapBySuffix[suffix]] ?? null;
+  if ("keys" in item && item.keys) {
+    return getValueByKeys(row, item.keys, suffix);
+  }
 
-              console.log(valueFollowUp);
-            } else if (followUp?.keys) {
-              valueFollowUp = getValueByKeys(rowClean, followUp.keys, suffix);
-            }
-        
-            if (valueFollowUp === "Ya") {
-              dataTarget = sesuaiData;
-            } else if (valueFollowUp === "Tidak") {
-              dataTarget = tidakSesuaiData;
-            } else {
-              dataTarget = sesuaiData;
-            }
-        
-          } else if (value === "Tidak") {
-            dataTarget = tidakAdaItemData;
-          } else {
-            return;
-          }
-        
-          dataTarget.push([""]);
-        
-          processQuestionItems(category.items, rowClean, suffix, dataTarget);
-        });
+  return null;
+}
+
+function processQuestionItems(
+  items: QuestionItem[],
+  row: Record<string, any>,
+  suffix: string,
+  target: ExcelCell[][]
+) {
+  for (const item of items) {
+    if (item.type === "title") {
+      target.push([""]);
+      target.push([item.label]);
+    } else if (item.type === "question") {
+      const value = resolveValueFromItem(item, row, suffix);
+      target.push([item.label, value]);
+
+      if (value === "Ya" && item.followUpsIfYes) {
+        processQuestionItems(item.followUpsIfYes, row, suffix, target);
+      } else if (value === "Tidak" && item.followUpsIfNo) {
+        processQuestionItems(item.followUpsIfNo, row, suffix, target);
+      }
+    }
+  }
+}
+
+AreaKerjaQuestionList.forEach((category) => {
+  const mainQuestion = category.items.find(
+    (item) => item.type === "question" && item.keys?.length
+  );
+
+  if (!mainQuestion) return;
+
+  const value = resolveValueFromItem(mainQuestion, rowClean, suffix);
+
+  let dataTarget: ExcelCell[][];
+
+  if (value === "Ya") {
+    const followUp = mainQuestion.followUpsIfYes?.[0];
+
+    let valueFollowUp: string | null = null;
+
+    if (followUp) {
+      valueFollowUp = resolveValueFromItem(followUp, rowClean, suffix);
+    }
+
+    if (valueFollowUp === "Ya") {
+      dataTarget = sesuaiData;
+    } else if (valueFollowUp === "Tidak") {
+      dataTarget = tidakSesuaiData;
+    } else {
+      dataTarget = sesuaiData; // fallback default
+    }
+
+  } else if (value === "Tidak") {
+    dataTarget = tidakAdaItemData;
+  } else {
+    return;
+  }
+
+  dataTarget.push([""]); // separator
+
+  processQuestionItems(category.items, rowClean, suffix, dataTarget);
+});
