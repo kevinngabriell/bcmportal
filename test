@@ -1,24 +1,9 @@
-function resolveValueFromItem(
-  item: QuestionItem,
-  row: Record<string, any>,
-  suffix: string
-): string | null {
-  console.log({
-    label: item.label,
-    suffix: suffix,
-    key: item,
-    answer: item.followUpsIfYes
-  })
-  if ( "keyMapBySuffix" in item && item.keyMapBySuffix?.[suffix]) {
-    const actualKey = item.keyMapBySuffix[suffix];
-    if (actualKey && row[actualKey] !== undefined) {
-      return row[actualKey];
-    }
-  }
-
-  if ("keys" in item && item.keys) {
-    return getValueByKeys(row, item.keys, suffix);
-  }
-
-  return null;
-}
+console.log("🔍 resolveValueFromItem:", {
+  label: item.label,
+  suffix,
+  keyFromMap: item.keyMapBySuffix?.[suffix],
+  fallbackKeys: item.keys,
+  finalValue: item.keyMapBySuffix?.[suffix]
+    ? row[item.keyMapBySuffix[suffix]]
+    : getValueByKeys(row, item.keys ?? [], suffix)
+});
