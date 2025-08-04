@@ -1,25 +1,14 @@
-function resolveValueFromItem(
-  item: QuestionItem,
-  row: Record<string, any>,
-  suffix: string
-): string | null {
-  let keyFromMap: string | undefined;
-  let finalValue: string | null = null;
+function getValueByKeys(row: Record<string, any>, keys: string[], suffix: string): string | null {
+  const allKeys = Object.keys(row);
 
-  if (item.keyMapBySuffix?.[suffix]) {
-    keyFromMap = item.keyMapBySuffix[suffix];
-    finalValue = row[keyFromMap] ?? null;
-  } else if (item.keys?.length) {
-    finalValue = getValueByKeys(row, item.keys, suffix);
+  for (const pattern of keys) {
+    const searchPattern = pattern.replace("${suffix}", suffix).toLowerCase();
+
+    const matchedKey = allKeys.find((k) => k.toLowerCase().includes(searchPattern));
+    if (matchedKey && row[matchedKey] !== undefined) {
+      return row[matchedKey];
+    }
   }
 
-  console.log("🔍 resolveValueFromItem", {
-    label: item.label,
-    suffix,
-    keyFromMap,
-    fallbackKeys: item.keys,
-    finalValue,
-  });
-
-  return finalValue;
+  return null;
 }
