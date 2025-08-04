@@ -1,42 +1,37 @@
-function findFirstAvailableValue(row: Record<string, any>, keys: string[], suffix: string): string | null {
-  for (const key of keys) {
-    const fullKey = `${key}${suffix}`.trim();
-    if (row[fullKey] != null && row[fullKey] !== "") {
-      return row[fullKey];
-    }
-    if (row[key] != null && row[key] !== "") {
-      return row[key];
-    }
-  }
-  return null;
-}
-
-function processQuestionItems(
-  items: QuestionItem[],
-  row: Record<string, any>,
-  suffix: string,
-  target: (string | null)[][]
-) {
-  for (const item of items) {
-    if (item.type === "title") {
-      target.push([""]);
-      target.push([item.label]);
-    } else if (item.type === "question" && item.keys) {
-      const value = findFirstAvailableValue(row, item.keys, suffix);
-      target.push([item.label, value]);
-
-      if (value === "Ya" && item.followUpsIfYes) {
-        processQuestionItems(item.followUpsIfYes, row, suffix, target);
-      } else if (value === "Tidak" && item.followUpsIfNo) {
-        processQuestionItems(item.followUpsIfNo, row, suffix, target);
-      }
-    }
-  }
-}
-
 questionList.forEach((category) => {
-  // Logic pilih target (misal karena APAR sesuai atau tidak)
-  const dataTarget = sesuaiData;
+  const mainQuestion = category.items.find(
+    (item) => item.type === "question" && item.keys?.length
+  );
+
+  if (!mainQuestion) return; // skip kalau ga ada question utama
+
+  const value = findFirstAvailableValue(rowClean, mainQuestion.keys!, suffix);
+
+  let dataTarget: (string | null)[][];
+
+  if (value === "Ya") {
+    // Tentukan apakah sesuai atau tidak sesuai
+    const followUp = mainQuestion.followUpsIfYes?.[0]; // asumsi pertanyaan ke-2 adalah indikator kesesuaian
+    const valueFollowUp = followUp?.keys
+      ? findFirstAvailableValue(rowClean, followUp.keys, suffix)
+      : null;
+
+    if (valueFollowUp === "Ya") {
+      dataTarget = sesuaiData;
+    } else if (valueFollowUp === "Tidak") {
+      dataTarget = tidakSesuaiData;
+    } else {
+      dataTarget = sesuaiData; // fallback default
+    }
+  } else if (value === "Tidak") {
+    dataTarget = tidakAdaItemData;
+  } else {
+    return; // skip kalau kosong
+  }
+
+  // Tambahkan judul kategori dan proses item
+  dataTarget.push([""]);
+  dataTarget.push([`----${category.category}---`]);
 
   processQuestionItems(category.items, rowClean, suffix, dataTarget);
 });
