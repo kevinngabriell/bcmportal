@@ -1,19 +1,30 @@
-export function aoaToJson(data: (string | null)[][]): JsonRow[] {
-  return data
-    .filter(row => row.length > 0 && row[0]) // skip row kosong
-    .map(row => {
-      if (row.length === 1 || !row[1]) {
-        return {
-          field: String(row[0]),
-          value: null,
-          type: "title"
-        };
-      } else {
-        return {
-          field: String(row[0]),
-          value: row[1],
-          type: "question"
-        };
+function processQuestionItems(
+  items: QuestionItem[],
+  row: Record<string, any>,
+  suffix: string,
+  target: ExcelCell[][]
+) {
+  for (const item of items) {
+    if (item.type === "title") {
+      target.push([""]);
+      target.push([item.label]);
+    } else if (item.type === "question" && item.keys) {
+      const value = findFirstAvailableValue(row, item.keys, suffix);
+      target.push([item.label, value]);
+
+      if (value === "Ya" && item.followUpsIfYes) {
+        getValueByKeys(item.followUpsIfYes, row, suffix, target);
+      } else if (value === "Tidak" && item.followUpsIfNo) {
+        getValueByKeys(item.followUpsIfNo, row, suffix, target);
       }
-    });
+    }
+  }
+}
+
+function getValueByKeys(row: Record<string, any>, keys: string[], suffix: string): string | null {
+  for (const keyTemplate of keys) {
+    const key = keyTemplate.replace("${suffix}", suffix);
+    if (row[key] !== undefined) return row[key];
+  }
+  return null;
 }
