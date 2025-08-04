@@ -1,37 +1,6 @@
-questionList.forEach((category) => {
-  const mainQuestion = category.items.find(
-    (item) => item.type === "question" && item.keys?.length
-  );
-
-  if (!mainQuestion) return; // skip kalau ga ada question utama
-
-  const value = findFirstAvailableValue(rowClean, mainQuestion.keys!, suffix);
-
-  let dataTarget: (string | null)[][];
-
-  if (value === "Ya") {
-    // Tentukan apakah sesuai atau tidak sesuai
-    const followUp = mainQuestion.followUpsIfYes?.[0]; // asumsi pertanyaan ke-2 adalah indikator kesesuaian
-    const valueFollowUp = followUp?.keys
-      ? findFirstAvailableValue(rowClean, followUp.keys, suffix)
-      : null;
-
-    if (valueFollowUp === "Ya") {
-      dataTarget = sesuaiData;
-    } else if (valueFollowUp === "Tidak") {
-      dataTarget = tidakSesuaiData;
-    } else {
-      dataTarget = sesuaiData; // fallback default
-    }
-  } else if (value === "Tidak") {
-    dataTarget = tidakAdaItemData;
-  } else {
-    return; // skip kalau kosong
-  }
-
-  // Tambahkan judul kategori dan proses item
-  dataTarget.push([""]);
-  dataTarget.push([`----${category.category}---`]);
-
-  processQuestionItems(category.items, rowClean, suffix, dataTarget);
-});
+Type 'ExcelCell[][]' is not assignable to type '(string | null)[][]'.
+  Type 'ExcelCell[]' is not assignable to type '(string | null)[]'.
+    Type 'ExcelCell' is not assignable to type 'string | null'.
+      Type '{ f: string; }' is not assignable to type 'string'.ts(2322)
+let dataTarget: (string | null)[][]
+No quick fixes available
