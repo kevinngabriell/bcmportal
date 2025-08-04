@@ -1,35 +1,839 @@
-function resolveValueFromItem(
-  item: QuestionItem,
-  row: Record<string, any>,
-  suffix: string
-): string | null {
-  const cleanSuffix = suffix.trim();
+export const PeralatanQuestionList : QuestionCategory[] = [
+    {
+        category: "Poster PK3",
+        items: [
+            {
+                type: "title",
+                label: "Poster PK3"
+            },
+            {
+                type: "question",
+                label: "Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3) ?",
+                keys: [
+                    "Apakah terpasang Poster UU 1 Tahun 1970 (ukuran A3)?"
+                ],
+                followUpsIfYes : [
+                    {
+                        type: "question",
+                        label: "Lantai Poster UU 1 Tahun 1970 terpasang",
+                        keys: [
+                            "Lantai Poster UU 1 Tahun 1970 terpasang"
+                        ],
+                    },
+                    {
+                        type: "question",
+                        label: "Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang ?",
+                        keys: [
+                            "Area / Unit Kerja dimana Poster UU 1 Tahun 1970 terpasang ?"
+                        ],
+                    },
+                    {
+                        type: "question",
+                        label: "Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini",
+                        keys: [
+                            "Lampirkan dokumentasi foto Poster UU 1 tahun 1970 yang telah terpasang di Gedung ini"
+                        ],
+                    },
+                ]
+            }
+        ]
+    },
+    {
+        category: "Kawasan Area Merokok",
+        items: [
+            {
+                type: "title",
+                label: "Kawasan Area Merokok"
+            },
+            {
+                type: "question",
+                label: "Apakah terpasang Rambu Kawasan dilarang merokok ?",
+                keys: [
+                    "Apakah terpasang Rambu Kawasan dilarang merokok?* *Di area publik untuk menandakan bahwa gedung BCA adalah kawasan bebas rokok"
+                ],
+                followUpsIfYes : [
+                    {
+                        type: "question",
+                        label: "Lantai Rambu Kawasan dilarang merokok terpasang",
+                        keys: [
+                            "Lantai Rambu Kawasan dilarang merokok terpasang"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang",
+                        keys: [
+                            "Area / Unit Kerja dimana rambu kawasan dilarang merokok terpasang"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini",
+                        keys: [
+                            "Lampirkan dokumentasi Rambu dilarang Merokok yang telah terpasang di Gedung ini"
+                        ]
+                    },
+                ]
+            }
+        ]
+    },
+    {
+        category: "AED",
+        items: [
+            {
+                type: "title",
+                label: "AED"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat AED ?",
+                keys: [
+                    "Apakah terdapat AED"
+                ],
+                followUpsIfYes : [
+                    {
+                        type: "question",
+                        label: "Lantai dimana AED berada ?",
+                        keys: [
+                            "Lantai dimana AED berada"
+                        ],
+                    },
+                    {
+                        type: "question",
+                        label: "Area / Unit Kerja dimana AED berada ?",
+                        keys: [
+                            "Area / Unit Kerja dimana AED berada"
+                        ],
+                    }, 
+                    {
+                        type: "question",
+                        label: "Apakah AED memenuhi seluruh standar yang ada ?",
+                        keys: [
+                            "Berikut merupakan standar AED : 1. Baterai dan Pad AED tidak expired 2. AED dimonitor secara berkala 3. AED dalam kondisi standby dan siap digunakan apabila diperlukan Apakah AED memenuhi seluruh..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto AED yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto AED yang berada di gedung ini"
+                                ],
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar AED di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar AED di atas, kriteria mana yang belum terpenuhi"
+                                ],
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto AED yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto AED yang berada di gedung ini"
+                                ],
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        category: "P3K",
+        items: [
+            {
+                type: "title",
+                label: "P3k"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Kotak P3K ?",
+                keys: [
+                    "Apakah terdapat Kotak P3K?"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Apakah Kotak P3K berada di PIC yang seharusnya ?",
+                        keys: [
+                            "Apakah Kotak P3K berada di PIC yang seharusnya ?"
+                        ],
+                    },
+                    {
+                        type: "question",
+                        label: "Lantai & Unit Kerja dimana kotak P3K berada ?",
+                        keys: [
+                            "Lantai & Unit Kerja dimana kotak P3K berada"
+                        ],
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Kotak P3K memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Kotak P3K: 1. Isi obat di dalam kotak P3K sesuai dan tidak expired 2. Kotak P3K dimonitor secara berkala Apakah Kotak P3K memenuhi seluruh standar yang tertera?"
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini"
+                                ],
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Kotak P3K di atas, kriteria mana yang belum terpenuhi"
+                                ],
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Kotak P3K yang berada di gedung ini"
+                                ],
+                            }
+                        ]
+                    },
+                ]
+            }
+        ]
+    },
+    {
+        category: "Tabung Oksigen",
+        items: [
+            {
+                type: "title",
+                label: "Tabung Oksigen"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Tabung Oksigen ?",
+                keys: [
+                    "Apakah terdapat Tabung Oksigen (Penanggungjawab Tabung Oksigen adalah unit kerja APK)"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana tabung oksigen berada ?",
+                        keys: [
+                            "Lantai dimana tabung oksigen berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Area / Unit Kerja dimana tabung oksigen berada ?",
+                        keys: [
+                            "Area / Unit Kerja dimana tabung oksigen berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Tabung Oksigen memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Tabung Oksigen : 1. Isi tabung oksigen di refill minimal setahun sekali 2. Tabung Oksigen dalam kondisi yang siap digunakan (Regulator terpasang pada tabung dan selang be..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Tabung Oksigen di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Tabung Oksigen yang berada di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
 
-  // 🌶 SPECIAL CASE for Warden Box standard question
-  if (item.label.includes("Warden Box memenuhi seluruh standar")) {
-    switch (cleanSuffix) {
-      case "0":
-      case "2":
-        return row["Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A..."] ?? null;
-      case "3":
-        return row["Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Ap..."] ?? null;
-      case "4":
-        return row["Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...2"] ?? null;
-      case "5":
-        return row["Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...3"] ?? null;
-    }
-  }
+        ]
+    },
+    {
+        category: "Ruang Menyusui",
+        items: [
+            {
+                type: "title",
+                label: "Ruang Menyusui"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Ruang Menyusui/Ruang Laktasi ?",
+                keys: [
+                    "Apakah terdapat Ruang Menyusui/Ruang Laktasi"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana Ruang Menyusui berada ?",
+                        keys: [
+                            "Lantai dimana Ruang Menyusui berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Ruang Menyusui memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Ruang Menyusui : 1. Terpasang rambu/signage informasi nama ruangan 2. Perlengkapan di ruang menyusui/ruang laktasi tertata dengan baik (Kursi, Wastafel, Kulkas, dll) 3. R..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Ruang Menyusui di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Menyusui/Ruang Laktasi di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
 
-  // 🧼 General logic
-  if (item.keyMapBySuffix?.[cleanSuffix]) {
-    const actualKey = item.keyMapBySuffix[cleanSuffix];
-    const val = row[actualKey];
-    if (val !== undefined) return val;
-  }
+        ]
+    },
+    {
+        category: "Ruang Mesin Lift",
+        items: [
+            {
+                type: "title",
+                label: "Ruang Mesin Lift"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Ruang Mesin Lift ?",
+                keys: [
+                    "Apakah terdapat Ruang Mesin Lift"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana Ruang Mesin Lift berada ?",
+                        keys: [
+                            "Lantai dimana Ruang Mesin Lift berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Ruang Mesin Lift memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Ruang Mesin Lift : 1. Terdapat rambu restricted area di pintu ruang mesin lift 2. Tidak terdapat barang-barang yang tidak terpakai di area ruang mesin lift 3. Terdapat AP..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Ruang Mesin Lift di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Mesin Lift di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
 
-  if (item.keys) {
-    return getValueByKeys(row, item.keys, cleanSuffix);
-  }
+        ]
+    },
+    {
+        category: "Ruang Pompa",
+        items: [
+            {
+                type: "title",
+                label: "Ruang Pompa"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Ruang Pompa ?",
+                keys: [
+                    "Apakah terdapat Ruang Pompa"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana Ruang Pompa berada ?",
+                        keys: [
+                            "Lantai dimana Ruang Pompa berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Ruang Pompa memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Ruang Pompa : 1. Terdapat rambu restricted area pada Pintu Ruang Pompa 2. Tidak terdapat barang-barang tidak terpakai di area ruang pompa 3. Terdapat APAR yang sesuai den..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Pompa di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Pompa di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Ruang Pompa di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Pompa di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Pompa di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
 
-  return null;
-}
+        ]
+    },
+    {
+        category: "Ruang Genset",
+        items: [
+            {
+                type: "title",
+                label: "Ruang Genset"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Ruang Genset ?",
+                keys: [
+                    "Apakah terdapat Ruang Genset"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana Ruang Genset berada ?",
+                        keys: [
+                            "Lantai dimana Ruang Genset berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Ruang genset memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Ruang Genset : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada Pintu Ruang Genset 2. Tidak terdapat barang-barang tidak terpakai di area..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Genset di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Genset di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Ruang Genset di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Genset di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Genset di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
+
+        ]
+    },
+    {
+        category: "Ruang Trafo",
+        items: [
+            {
+                type: "title",
+                label: "Ruang Trafo"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Ruang Trafo ?",
+                keys: [
+                    "Apakah terdapat Ruang Trafo"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana Ruang Trafo berada ?",
+                        keys: [
+                            "Lantai dimana Ruang Trafo berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Ruang Trafo memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Ruang Trafo : 1. Terdapat rambu restricted area, dilarang merokok, dan danger high voltage pada pintu ruang trafo 2. Tidak terdapat barang-barang tidak terpakai di area r..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Trafo di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Trafo di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Ruang Trafo di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Ruang Trafo di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Ruang Trafo di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
+
+        ]
+    },
+    {
+        category: "Tangki Timbun",
+        items: [
+            {
+                type: "title",
+                label: "Tangki Timbun"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Tangki Timbun ?",
+                keys: [
+                    "Apakah terdapat Tangki Timbun (berisi solar, dapat berada di bawah tanah maupun tidak)"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana Tangki Timbun berada ?",
+                        keys: [
+                            "Lantai dimana Tangki Timbun berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Tangki Timbun memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Tangki Timbun : 1. Terdapat rambu dilarang merokok pada area tangki timbun 2. Tidak terdapat barang-barang tidak terpakai di area tangki timbun (barang-barang tidak terpa..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Tangki Timbun di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Tangki Timbun di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Ruang Tangki Timbun di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Tangki Timbun di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Tangki Timbun di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
+
+        ]
+    },
+    {
+        category: "MCFA",
+        items: [
+            {
+                type: "title",
+                label: "MCFA (Main Control Fire Alarm)"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat MCFA (Main Control Fire Alarm) ?",
+                keys: [
+                    "Apakah terdapat MCFA (Main Control Fire Alarm)"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana MCFA berada ?",
+                        keys: [
+                            "Lantai dimana MCFA berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah Main Control Fire Alaram memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar MCFA : 1. MCFA berfungsi dengan baik (Dapat menangkap sinyal dari detector ataupun error akibat kerusakan detector) 2. Terdapat teknisi atau tim pengelola gedung / securi..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto MCFA yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto MCFA yang berada di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar MCFA di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar MCFA di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto MCFA yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto MCFA yang berada di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
+
+        ]
+    },
+    {
+        category: "Mesin Paging",
+        items: [
+            {
+                type: "title",
+                label: "Mesin Paging"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Mesin Paging ?",
+                keys: [
+                    "Apakah terdapat Mesin Paging"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Lantai dimana Mesin Paging berada ?",
+                        keys: [
+                            "Lantai dimana Mesin Paging berada"
+                        ]
+                    },
+                    {
+                        type: "question",
+                        label: "Apakah mesin Paging memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Mesin Paging : 1. Mesin Paging berfungsi dengan baik (Suara terdengar ke seluruh lantai) 2. Memiliki operator yang mengoperasikan mesin paging dan mendapatkan pelatihan ..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Mesin Paging di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Mesin Paging yang berada di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
+
+        ]
+    },
+    {
+        category: "Hydrant Outdoor",
+        items: [
+            {
+                type: "title",
+                label: "Hydrant Outdoor"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Hydrant Outdoor ?",
+                keys: [
+                    "Apakah terdapat Hydrant Outdoor (Hydrant yang terletak diluar gedung)"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Apakah Hydrant Outdoor memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Hydrant Outdoor 1. Hydrant Outdoor dalam kondisi terawat dengan baik dan siap digunakan apabila diperlukan 2. Hydrant rutin dimonitor Apakah Hydrant Outdoor memenuhi sel..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Hydrant Outdoor di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Hydrant Outdoor yang berada di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
+
+        ]
+    },
+    {
+        category: "Titik Kumpul (Assembly Point)",
+        items: [
+            {
+                type: "title",
+                label: "Titik Kumpul (Assembly Point)"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat Titik Kumpul (Assembly Point) ?",
+                keys: [
+                    "Apakah terdapat Titik Kumpul (Assembly Point)"
+                ],
+                followUpsIfYes: [
+                    {
+                        type: "question",
+                        label: "Apakah Assembly Point memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar Assembly Point : 1. Terpasang rambu assembly point yang dapat terlihat dengan jelas 2. Assembly point mudah diakses Apakah Assembly Point memenuhi seluruh standar yang t..."
+                        ],
+                        followUpsIfYes: [
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Assembly point yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo: [
+                            {
+                                type: "question",
+                                label: "Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Assembly Point di atas, kriteria mana yang belum terpenuhi"
+                                ]
+                            },
+                            {
+                                type: "question",
+                                label: "Lampirkan dokumentasi foto Assembly point yang berada di gedung ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Assembly point yang berada di gedung ini"
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            },
+
+        ]
+    },
+]
