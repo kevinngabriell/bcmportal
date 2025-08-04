@@ -1,40 +1,24 @@
-AreaKerjaQuestionList.forEach((category) => {
-  const mainQuestion = category.items.find(
-    (item) => item.type === "question" && item.keys?.length
-  );
-
-  if (!mainQuestion) return;
-
-  const value = getValueByKeys(rowClean, mainQuestion.keys!, suffix);
-
-  let dataTarget: ExcelCell[][];
-
-  if (value === "Ya") {
-    const followUp = mainQuestion.followUpsIfYes?.[0];
-
-    let valueFollowUp: string | null = null;
-
-    if (followUp?.keyMapBySuffix && followUp.keyMapBySuffix[suffix]) {
-      valueFollowUp = rowClean[followUp.keyMapBySuffix[suffix]] ?? null;
-    } else if (followUp?.keys) {
-      valueFollowUp = getValueByKeys(rowClean, followUp.keys, suffix);
+function resolveValueFromItem(
+  item: QuestionItem,
+  row: Record<string, any>,
+  suffix: string
+): string | null {
+  console.log({
+    label: item.label,
+    suffix: suffix,
+    key: item,
+    answer: item.followUpsIfYes
+  })
+  if ( "keyMapBySuffix" in item && item.keyMapBySuffix?.[suffix]) {
+    const actualKey = item.keyMapBySuffix[suffix];
+    if (actualKey && row[actualKey] !== undefined) {
+      return row[actualKey];
     }
-
-    if (valueFollowUp === "Ya") {
-      dataTarget = sesuaiData;
-    } else if (valueFollowUp === "Tidak") {
-      dataTarget = tidakSesuaiData;
-    } else {
-      dataTarget = sesuaiData;
-    }
-
-  } else if (value === "Tidak") {
-    dataTarget = tidakAdaItemData;
-  } else {
-    return;
   }
 
-  dataTarget.push([""]);
+  if ("keys" in item && item.keys) {
+    return getValueByKeys(row, item.keys, suffix);
+  }
 
-  processQuestionItems(category.items, rowClean, suffix, dataTarget);
-});
+  return null;
+}
