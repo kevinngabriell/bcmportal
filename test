@@ -1,11 +1,65 @@
 {
-  type: "question",
-  label: "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
-  keyMapBySuffix: {
-    "0": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...",
-    "2": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...",
-    "3": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Ap...",
-    "4": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...2",
-    "5": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...3",
-  }
-}
+        category: "WARDEN BOX",
+        items : [
+            {
+                type: "title",
+                label: "WARDEN BOX"
+            },
+            {
+                type: "question",
+                label: "Apakah terdapat WARDEN BOX ?",
+                keys: [
+                    "Apakah terdapat Warden Box di lantai ini?",
+                    "Apakah terdapat Warden Box di lantai ini?${suffix}"
+                ],
+                followUpsIfYes : [
+                    {
+                        type: "question",
+                        label: "Apakah Warden Box memenuhi seluruh standar yang tertera ?",
+                        keys: [
+                            "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...",
+                            "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Ap...",
+                            "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...2",
+                            "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...3"
+                        ],
+                        keyMapBySuffix: {
+                            "0": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...",
+                            "2": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...",
+                            "3": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Ap...",
+                            "4": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...2",
+                            "5": "Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...3",
+                          }
+                        followUpsIfYes : [
+                            {
+                                type: "question",
+                                label: "Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)",
+                                    "Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas",
+                                    "Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}",
+                                    "Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}"
+                                ]
+                            }
+                        ],
+                        followUpsIfNo : [
+                            {
+                                type: "question",
+                                label: "Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?",
+                                keys: [
+                                    "Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi${suffix}"
+                                ]
+                            }, 
+                            {
+                                type: "question",
+                                label: "Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini",
+                                keys: [
+                                    "Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)${suffix}",
+                                    "Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas${suffix}"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }, 
