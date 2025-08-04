@@ -1,7 +1,20 @@
-function getValueByKeys(row: Record<string, any>, keys: string[], suffix: string): string | null {
-  for (const keyTemplate of keys) {
-    const key = keyTemplate.replace("${suffix}", suffix);
-    if (row[key] !== undefined) return row[key];
+function resolveValueFromItem(
+  item: QuestionItem,
+  row: Record<string, any>,
+  suffix: string
+): string | null {
+  if ("keyMapBySuffix" in item && item.keyMapBySuffix) {
+    const actualKey = item.keyMapBySuffix[suffix];
+    if (actualKey && row[actualKey] !== undefined) {
+      return row[actualKey];
+    }
   }
+
+  if ("keys" in item && item.keys) {
+    return getValueByKeys(row, item.keys, suffix);
+  }
+
   return null;
 }
+
+const value = resolveValueFromItem(item, row, suffix);
