@@ -1,5 +1,9 @@
-Type '{ field: string; value: string | null; }[]' is not assignable to type 'JsonRow[]'.
-  Property 'type' is missing in type '{ field: string; value: string | null; }' but required in type 'JsonRow'.ts(2322)
-K3Logic.ts(11, 3): 'type' is declared here.
-(property) section: JsonRow[]
-No quick fixes available
+function aoaToJson(data: (string | null)[][]): { field: string, value: string | null, title: string }[] {
+  return data
+    .filter(row => row.length >= 2 && row[0]) // skip row kosong
+    .map(row => ({
+      field: String(row[0]),
+      value: row[1] ?? null,
+      
+    }));
+}
