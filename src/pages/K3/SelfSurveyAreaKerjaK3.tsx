@@ -1,6 +1,6 @@
 import { List, message, Upload, type UploadProps } from "antd";
 import Layout from "../../components/layout";
-import { Button, CloseButton, Container, Dialog, IconButton, Input, Portal, Tabs, Text } from "@chakra-ui/react";
+import { Button, CloseButton, Container, Dialog, IconButton, Portal, Tabs, Text } from "@chakra-ui/react";
 import { FolderOpenOutlined, InboxOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { generateSelfSurveyAreaKerjaK3, type GeneratedFile } from "../../logic/K3/K3Logic";
@@ -126,55 +126,35 @@ function SelfSurveyAreaKerjaK3(){
                                                             </Tabs.Trigger>
                                                         </Tabs.List>
                                                         <Tabs.Content value="sesuai">
-                                                            <div
-                                                                style={{
-                                                                maxHeight: "300px",
-                                                                overflowY: "auto",
-                                                                overflowX: "hidden",
-                                                                color: "black",
-                                                                }}
-                                                            >
+                                                            <div style={{maxHeight: "300px", overflowY: "auto", overflowX: "hidden",  color: "black"}}>
+                                                                
                                                                 {file.jsonData?.sesuai.map((row, i) => {
+                                                                const isHeader = row.value === null;
+
                                                                 const isImage = isImageUrl(row.value ?? "");
                                                                 return (
-                                                                    <div
-                                                                    key={i}
-                                                                    style={{
-                                                                        display: "flex",
-                                                                        alignItems: "flex-start",
-                                                                        marginBottom: "12px",
-                                                                    }}
-                                                                    >
-                                                                    <div style={{ width: "40%", fontWeight: "bold", paddingRight: 10 }}>
-                                                                        {row.field}
-                                                                    </div>
-                                                                    <div style={{ width: "60%" }}>
-                                                                        {isImage ? (
-                                                                        <img
-                                                                            src={row.value ?? ""}
-                                                                            alt="Preview"
-                                                                            style={{ maxWidth: 400 }}
-                                                                        />
+                                                                    <div key={i} style={{display: "flex", alignItems: "flex-start", marginBottom: "12px", fontWeight: isHeader ? "bold" : "normal", marginTop: isHeader && i !== 0 ? 30 : 12,}}>
+                                                                        {isHeader ? (
+                                                                            <div style={{ width: "100%" }}>{row.field}</div>
                                                                         ) : (
-                                                                        <input
-                                                                            type="text"
-                                                                            value={row.value ?? ""}
-                                                                            readOnly
-                                                                            style={{
-                                                                            width: "100%",
-                                                                            padding: "4px 8px",
-                                                                            backgroundColor: "#f5f5f5",
-                                                                            border: "1px solid #ccc",
-                                                                            borderRadius: 4,
-                                                                            }}
-                                                                        />
+                                                                            <>
+                                                                            <div style={{ width: "40%", fontWeight: "bold", paddingRight: 10 }}>
+                                                                                {row.field}
+                                                                            </div>
+                                                                            <div style={{ width: "60%" }}>
+                                                                                {isImage ? (
+                                                                                    <img src={row.value ?? ""} alt="Preview" style={{ maxWidth: 400 }}/>
+                                                                                ) : (
+                                                                                <input type="text" value={row.value ?? ""} readOnly style={{ width: "100%", padding: "4px 8px", backgroundColor: "#f5f5f5", border: "1px solid #ccc", borderRadius: 4, }}/>
+                                                                                )}
+                                                                            </div>
+                                                                            </>
                                                                         )}
-                                                                    </div>
                                                                     </div>
                                                                 );
                                                                 })}
                                                             </div>
-                                                            </Tabs.Content>
+                                                        </Tabs.Content>
                                                         <Tabs.Content value="tidaksesuai">
                                                         <div style={{ maxHeight: "300px", overflowY: "auto", overflowX: "hidden", color: "black" }}>
                                                             {file.previewDataTidakSesuai?.map((row, i) => (
