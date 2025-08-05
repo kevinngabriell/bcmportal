@@ -6,7 +6,8 @@ import type { ExcelRow } from "../../variable/variable";
 import Layout from "../../components/layout";
 import { Button, CloseButton, Container, Dialog, IconButton, Portal, Tabs, Text } from "@chakra-ui/react";
 import { FolderOpenOutlined, InboxOutlined } from "@ant-design/icons";
-import { cellToString, isImageUrl } from "./AreaKerjaPreview";
+import { isImageUrl } from "./AreaKerjaPreview";
+import { generateK3Report } from "../../logic/K3/GenerateReportK3";
 
 function SelfSurveyPeralatanK3(){
     //Set upload varaible and generated file
@@ -55,6 +56,21 @@ function SelfSurveyPeralatanK3(){
         URL.revokeObjectURL(url);
     };
 
+    const handleDownloadReport = (file: GeneratedFile) => {
+        if (!file.jsonData) return;
+    
+        generateK3Report(
+            {
+                sesuai: file.jsonData.sesuai || [],
+                tidakSesuai: file.jsonData.tidakSesuai || [],
+                tidakAdaItem: file.jsonData.tidakAdaItem || []
+            },
+            file.tanggalPemeriksaan,
+            file.statusGedung + " " + file.namaGedung,
+            "Peralatan"
+        );
+    };
+
     return (
         <Layout>
             <Text fontSize="1.5rem" color="black" fontWeight="bold">Self Survey Peralatan K3</Text>
@@ -89,8 +105,14 @@ function SelfSurveyPeralatanK3(){
                                         <Dialog.Backdrop/>
                                         <Dialog.Positioner>
                                             <Dialog.Content minW="900px">
-                                                <Dialog.Header>
+                                                <Dialog.Header  display={"flex"} flexDirection={"column"}>
                                                     <Dialog.Title>{file.statusGedung} {file.namaGedung}</Dialog.Title>
+                                                    <Dialog.Description>
+                                                        <Text fontSize={"0.7rem"}>Wilayah : {file.wilayah}</Text>
+                                                        <Text fontSize={"0.7rem"}>Tanggal Pemeriksaan : {file.tanggalPemeriksaan}</Text>
+                                                        <Text fontSize={"0.7rem"}>Nama Pemeriksa : {file.namaPemeriksa}</Text>
+                                                        <Text fontSize={"0.7rem"}>Nama Pendamping Pemeriksa : {file.namaPendampingPemeriksa}</Text>
+                                                    </Dialog.Description>
                                                 </Dialog.Header>
                                                 <Dialog.Body>
                                                     <Tabs.Root defaultValue="sesuai">
@@ -106,57 +128,113 @@ function SelfSurveyPeralatanK3(){
                                                             </Tabs.Trigger>
                                                         </Tabs.List>
                                                         <Tabs.Content value="sesuai">
-                                                            <div style={{ maxHeight: "400px", overflowY: "auto", overflowX: "hidden" }}>
-                                                                {file.previewDataSesuai?.map((row, i) => (
-                                                                <div key={i}>
-                                                                    {row.map((cell, j) => {
-                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
-                                                                    if (isImageUrl(cellStr)) {
-                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
-                                                                    } else {
-                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
-                                                                    }
-                                                                    })}
-                                                                </div>
-                                                                ))}
-                                                            </div>
+                                                        <div style={{maxHeight: "300px", overflowY: "auto", overflowX: "hidden", color: "black"}}>
+                                                            {file.jsonData?.sesuai.map((row, i) => {
+                                                                const isHeader = row.value === null;
+                                                                const isImage = isImageUrl(row.value ?? "");
+
+                                                                let marginTop = 0;
+                                                                if(isHeader && i!== 0){
+                                                                    marginTop = 30;
+                                                                }
+
+                                                                return (
+                                                                    <div key={i} style={{display: "flex", alignItems: "flex-start", marginBottom: "12px", fontWeight: isHeader ? "bold" : "normal", marginTop: marginTop}}>
+                                                                        {isHeader ? (
+                                                                            <div style={{ width: "100%" }}>{row.field}</div>
+                                                                        ) : (
+                                                                            <>
+                                                                            <div style={{ width: "40%", paddingRight: 10 }}>
+                                                                                {row.field}
+                                                                            </div>
+                                                                            <div style={{ width: "60%" }}>
+                                                                                {isImage ? (
+                                                                                    <img src={row.value ?? ""} alt="Preview" style={{ maxWidth: 400 }}/>
+                                                                                ) : (
+                                                                                <input type="text" value={row.value ?? ""} readOnly style={{ width: "100%", padding: "4px 8px", backgroundColor: "#f5f5f5", border: "1px solid #ccc", borderRadius: 4, }}/>
+                                                                                )}
+                                                                            </div>
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
                                                         </Tabs.Content>
                                                         <Tabs.Content value="tidaksesuai">
-                                                        <div style={{ maxHeight: "400px", overflowY: "auto", overflowX: "hidden" }}>
-                                                            {file.previewDataTidakSesuai?.map((row, i) => (
-                                                                <div key={i}>
-                                                                    {row.map((cell, j) => {
-                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
-                                                                    if (isImageUrl(cellStr)) {
-                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
-                                                                    } else {
-                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
-                                                                    }
-                                                                    })}
-                                                                </div>
-                                                                ))}
-                                                            </div>
+                                                        <div style={{maxHeight: "300px", overflowY: "auto", overflowX: "hidden", color: "black"}}>
+                                                            {file.jsonData?.tidakSesuai.map((row, i) => {
+                                                                const isHeader = row.value === null;
+                                                                const isImage = isImageUrl(row.value ?? "");
+
+                                                                let marginTop = 0;
+                                                                if(isHeader && i!== 0){
+                                                                    marginTop = 30;
+                                                                }
+
+                                                                return (
+                                                                    <div key={i} style={{display: "flex", alignItems: "flex-start", marginBottom: "12px", fontWeight: isHeader ? "bold" : "normal", marginTop: marginTop}}>
+                                                                        {isHeader ? (
+                                                                            <div style={{ width: "100%" }}>{row.field}</div>
+                                                                        ) : (
+                                                                            <>
+                                                                            <div style={{ width: "40%", paddingRight: 10 }}>
+                                                                                {row.field}
+                                                                            </div>
+                                                                            <div style={{ width: "60%" }}>
+                                                                                {isImage ? (
+                                                                                    <img src={row.value ?? ""} alt="Preview" style={{ maxWidth: 400 }}/>
+                                                                                ) : (
+                                                                                <input type="text" value={row.value ?? ""} readOnly style={{ width: "100%", padding: "4px 8px", backgroundColor: "#f5f5f5", border: "1px solid #ccc", borderRadius: 4, }}/>
+                                                                                )}
+                                                                            </div>
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
                                                         </Tabs.Content>
                                                         <Tabs.Content value="tidakadaitem">
-                                                        <div style={{ maxHeight: "400px", overflowY: "auto", overflowX: "hidden" }}>
-                                                            {file.previewDataTidakAdaItem?.map((row, i) => (
-                                                                <div key={i}>
-                                                                    {row.map((cell, j) => {
-                                                                    const cellStr = cellToString(cell); // fungsi konversi ke string
-                                                                    if (isImageUrl(cellStr)) {
-                                                                        return <img key={j} src={cellStr} style={{maxWidth: 400}} />
-                                                                    } else {
-                                                                        return <span key={j} style={{ marginRight: 8 }}>{cellStr}</span>;
-                                                                    }
-                                                                    })}
-                                                                </div>
-                                                                ))}
-                                                            </div>
+                                                        <div style={{maxHeight: "300px", overflowY: "auto", overflowX: "hidden", color: "black"}}>
+                                                            {file.jsonData?.tidakAdaItem.map((row, i) => {
+                                                                const isHeader = row.value === null;
+                                                                const isImage = isImageUrl(row.value ?? "");
+
+                                                                let marginTop = 0;
+                                                                if(isHeader && i!== 0){
+                                                                    marginTop = 30;
+                                                                }
+
+                                                                return (
+                                                                    <div key={i} style={{display: "flex", alignItems: "flex-start", marginBottom: "12px", fontWeight: isHeader ? "bold" : "normal", marginTop: marginTop}}>
+                                                                        {isHeader ? (
+                                                                            <div style={{ width: "100%" }}>{row.field}</div>
+                                                                        ) : (
+                                                                            <>
+                                                                            <div style={{ width: "40%", paddingRight: 10 }}>
+                                                                                {row.field}
+                                                                            </div>
+                                                                            <div style={{ width: "60%" }}>
+                                                                                {isImage ? (
+                                                                                    <img src={row.value ?? ""} alt="Preview" style={{ maxWidth: 400 }}/>
+                                                                                ) : (
+                                                                                <input type="text" value={row.value ?? ""} readOnly style={{ width: "100%", padding: "4px 8px", backgroundColor: "#f5f5f5", border: "1px solid #ccc", borderRadius: 4, }}/>
+                                                                                )}
+                                                                            </div>
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
                                                         </Tabs.Content>
                                                     </Tabs.Root>
-                                                    {/* <div id="previewTable" style={{ marginTop: "20px", backgroundColor: "#fff", padding: "1rem" }} /> */}
                                                 </Dialog.Body>
                                                 <Dialog.Footer>
+                                                    <Button onClick={() => handleDownloadReport(file)} color={"black"}>
+                                                        Download Report
+                                                    </Button>
                                                     <Button onClick={() => handleDownload(file)} color={"black"}>Download as Excel</Button>
                                                 </Dialog.Footer>
                                                 <Dialog.CloseTrigger asChild>
