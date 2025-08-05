@@ -171,22 +171,7 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
         rowClean[`Lampirkan dokumentasi foto Warden Box yang belum sesuai standar di atas (Jumlah foto dapat lebih dari 1 dan sesuai dengan checklist standar yang belum terpenuhi)`] || 
         rowClean[`Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini yang telah sesuai seluruh standar di atas`];
         
-        if(namaGedung=== "Makassar"){
-          console.log(Object.keys(rowClean))
-        }
-
-        let WardenBoxSesuai;
-        if(suffix === "2"){
-          WardenBoxSesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...`];
-        } else if (suffix === "3"){
-          WardenBoxSesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC Ap...`];
-        } else if (suffix === "4"){
-          WardenBoxSesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...2`];
-        } else if (suffix === "5"){
-          WardenBoxSesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...3`];
-        } else if (suffix === ""){
-          WardenBoxSesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...`];
-        }
+        const WardenBoxSesuai = rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...${suffix}`] || rowClean[`Berikut merupakan standar pemasangan warden box : 1. Warden Box dipasang ditempat yang mudah untuk dijangkau 2. Warden Box memiliki Hammer (Palu) 3. Isi Warden Box dimonitor sesuai ketentuan BC A...`];
 
         const judulSprinkler = "SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR";
         const adaSprinkler = rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?${suffix}`] || rowClean[`Apakah terdapat Sprinkler/Smoke Detector/Heat Detector di area/unit kerja?`];
@@ -231,13 +216,13 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
             sesuaiData.push([judulAPAR, null]);
             sesuaiData.push(["Apakah Terdapat APAR ?", adaAPAR]);
             sesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?", APARsesuai]);
-            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR di lantai ini", lampiranAPAR]);
+            sesuaiData.push(["Lampiran sampel dokumentasi foto APAR di lantai ini", lampiranAPAR]);
           } else if (APARsesuai === "Tidak"){
             tidakSesuaiData.push([judulAPAR, null]);
             tidakSesuaiData.push(["Apakah Terdapat APAR ?", adaAPAR]);
             tidakSesuaiData.push(["Apakah APAR memenuhi seluruh standar yang tertera ?",APARsesuai]);
             tidakSesuaiData.push(["Dari standar APAR di atas, kriteria mana yang belum terpenuhi ?", standarAPAR]);
-            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto APAR di lantai ini", lampiranAPAR]);
+            tidakSesuaiData.push(["Lampiran sampel dokumentasi foto APAR di lantai ini", lampiranAPAR]);
           }
         } else if (adaAPAR === "Tidak") {
           tidakAdaItemData.push([judulAPAR, null]);
@@ -250,13 +235,13 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
             sesuaiData.push([judulHydrant, null]);
             sesuaiData.push(["Apakah Terdapat Hydrant ?", adaHydrant]);
             sesuaiData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", HydrantSesuai]);
-            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", lampiranHydrant ]);
+            sesuaiData.push(["Lampiran sampel dokumentasi foto Hydrant dilantai ini", lampiranHydrant ]);
           } else if (HydrantSesuai === "Tidak"){
             tidakSesuaiData.push([judulHydrant, null]);
             tidakSesuaiData.push(["Apakah Terdapat Hydrant ?", adaHydrant]);
             tidakSesuaiData.push(["Apakah Hydrant memenuhi seluruh standar yang tertera ?", HydrantSesuai]);
             tidakSesuaiData.push(["Dari standar Hydrant di atas, kriteria mana yang belum terpenuhi ?", standarHydrant]);
-            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Hydrant dilantai ini", lampiranHydrant ]);
+            tidakSesuaiData.push(["Lampiran sampel dokumentasi foto Hydrant dilantai ini", lampiranHydrant ]);
           }
         } else if (adaHydrant === "Tidak"){
           tidakAdaItemData.push([judulHydrant, null]);
@@ -270,13 +255,13 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
             sesuaiData.push([judulWardenBox, null]);
             sesuaiData.push(["Apakah Terdapat Warden Box ?", adaWardenBox]);
             sesuaiData.push(["Apakah Warden Box memenuhi seluruh standar yang tertera ?", WardenBoxSesuai]);
-            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", lampiranWardenBox]);
+            sesuaiData.push(["Lampiran sampel dokumentasi foto Warden Box dilantai ini", lampiranWardenBox]);
           } else if (WardenBoxSesuai === "Tidak"){
             tidakSesuaiData.push([judulWardenBox, null]);
             tidakSesuaiData.push(["Apakah Terdapat Warden Box ?", adaWardenBox]);
             tidakSesuaiData.push(["Apakah Warden Box memenuhi seluruh standar yang tertera ?", WardenBoxSesuai]);
             tidakSesuaiData.push(["Dari standar Warden Box di atas, kriteria mana yang belum terpenuhi ?", standarWardenBox]);
-            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Warden Box dilantai ini", lampiranWardenBox]);
+            tidakSesuaiData.push(["Lampiran sampel dokumentasi foto Warden Box dilantai ini", lampiranWardenBox]);
           }
         } else if (adaWardenBox === "Tidak"){
           tidakAdaItemData.push([judulWardenBox, null]);
@@ -293,18 +278,16 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
             sesuaiData.push([judulSprinkler, null]);
             sesuaiData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", adaSprinkler ]);
             sesuaiData.push(["Apakah Sprinkler/Smoke Detector/Heat Detector memenuhi seluruh standar yang tertera ?", SprinklerSesuai ]);
-            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", lampiranSprinkler]);
+            sesuaiData.push(["Lampiran sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", lampiranSprinkler]);
           } else if (SprinklerSesuai === "Tidak"){
             tidakSesuaiData.push([judulSprinkler, null]);
-            tidakSesuaiData.push(["----SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR---"]);
             tidakSesuaiData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", adaSprinkler ]);
             tidakSesuaiData.push(["Apakah Sprinkler/Smoke Detector/Heat Detector memenuhi seluruh standar yang tertera ?", SprinklerSesuai ]);
             tidakSesuaiData.push(["Dari standar Sprinkler/Smoke Detector/Heat Detector di atas, kriteria mana yang belum terpenuhi ?", standarSprinkler ]);
-            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", lampiranSprinkler]);
+            tidakSesuaiData.push(["Lampiran sampel dokumentasi foto Sprinkler/Smoke Detector/Heat Detector dilantai ini", lampiranSprinkler]);
           }
         } else if (adaSprinkler === "Tidak"){
           tidakAdaItemData.push([judulSprinkler, null]);
-          tidakAdaItemData.push(["----SPRINKLER/SMOKE DETECTOR/HEAT DETECTOR---"]);
           tidakAdaItemData.push(["Apakah Terdapat Sprinkler/Smoke Detector/Heat Detector ?", adaSprinkler ]);
         }
 
@@ -314,13 +297,13 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
             sesuaiData.push([judulTangga, null]);
             sesuaiData.push(["Apakah Terdapat Tangga Darurat ?", adaTangga ]);
             sesuaiData.push(["Apakah Tangga Darurat memenuhi seluruh standar yang tertera ?", TanggaSesuai]);
-            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini", lampiranTangga]);
+            sesuaiData.push(["Lampiran sampel dokumentasi foto Tangga Darurat dilantai ini", lampiranTangga]);
           } else if (TanggaSesuai === "Tidak"){
             tidakSesuaiData.push([judulTangga, null]);
             tidakSesuaiData.push(["Apakah Terdapat Tangga Darurat ?", adaTangga ]);
             tidakSesuaiData.push(["Apakah Tangga Darurat memenuhi seluruh standar yang tertera ?", TanggaSesuai]);
             tidakSesuaiData.push(["Dari standar Tangga Darurat di atas, kriteria mana yang belum terpenuhi ?", standarTangga ]);
-            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Tangga Darurat dilantai ini", lampiranTangga]);
+            tidakSesuaiData.push(["Lampiran sampel dokumentasi foto Tangga Darurat dilantai ini", lampiranTangga]);
           }
         } else if (adaTangga === "Tidak"){
           tidakAdaItemData.push([judulTangga, null]);
@@ -334,13 +317,13 @@ export function generateSelfSurveyAreaKerjaK3(excelData: ExcelRow[]): GeneratedF
             sesuaiData.push([judulRAT, null]);
             sesuaiData.push(["Apakah Terdapat Ruang Area Terbatas ?", adaRAT]);
             sesuaiData.push(["Apakah Ruang Area Terbatas memenuhi seluruh standar yang tertera ?", RATsesuai]);
-            sesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini",lampiranRAT]);
+            sesuaiData.push(["Lampiran sampel dokumentasi foto Ruang Area Terbatas dilantai ini",lampiranRAT]);
           } else if (RATsesuai === "Tidak"){
             tidakSesuaiData.push([judulRAT, null]);
             tidakSesuaiData.push(["Apakah Terdapat Ruang Area Terbatas ?", adaRAT]);
             tidakSesuaiData.push(["Apakah Ruang Area Terbatas memenuhi seluruh standar yang tertera ?", RATsesuai]);
             tidakSesuaiData.push(["Dari standar Ruang Area Terbatas (Panel Distribusi/Hub) di atas, kriteria mana yang belum terpenuhi ?", standarRAT]);
-            tidakSesuaiData.push(["Lampirkan 1 sampel dokumentasi foto Ruang Area Terbatas dilantai ini",lampiranRAT]);
+            tidakSesuaiData.push(["Lampiran sampel dokumentasi foto Ruang Area Terbatas dilantai ini",lampiranRAT]);
           }
         } else if (adaRAT === "Tidak"){
           tidakAdaItemData.push([judulRAT, null]);
