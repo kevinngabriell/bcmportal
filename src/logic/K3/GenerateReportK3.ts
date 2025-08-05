@@ -24,10 +24,12 @@ export async function generateK3Report(
     sheet.mergeCells("A2:G2");
     sheet.getCell("A2").value = `Tanggal Survei: ${tanggalSurvei}`;
 
+    sheet.getCell("A3").value = ``;
+
     // TABLE HEADER
     const header = ["No", "Lokasi", "Hasil Survei", "Dokumentasi Survei", "Tindak Lanjut", "PIC", ""];
     sheet.addRow(header);
-    sheet.getRow(3).font = { bold: true };
+    sheet.getRow(4).font = { bold: true };
 
     let rowNumber = 1;
     let currentGroup: any[] = [];
@@ -50,21 +52,23 @@ export async function generateK3Report(
       // Deteksi header kategori (judul)
       if (row.value === null) {
         currentCategory = row.field;
-
+        
         if (currentGroup.length > 0) {
-          const dokumentasi = findValue(currentGroup, "lampirkan");
-          const tindaklanjut = findValue(currentGroup, "tindak lanjut");
-          const PIC = findValue(currentGroup, "pic");
+          const dokumentasi = findLampiranSetelahIndex(rows, i);
+          const temuan = findTemuanSetelahIndex(rows, i);
           const hasil = currentCategory;
           const lokasiGabung = `${lokasiSaatIni} - ${areaKerjaSaatIni}`;
+          const hasiltemuan = hasil + " - " + temuan;
+
+          console.log(temuan)
 
           sheet.addRow([
             rowNumber++,
             lokasiGabung,
-            hasil,
+            hasiltemuan,
             dokumentasi,
-            tindaklanjut,
-            PIC,
+            "",
+            "",
             ""
           ]);
           sheet.getRow(sheet.lastRow!.number).height = 40;
@@ -72,37 +76,34 @@ export async function generateK3Report(
         }
 
         // Ganti currentCategory
-       currentCategory = row.field;
+        currentCategory = row.field;
       } else {
         currentGroup.push(row);
       }
     }
 
-    // Group terakhir
-    if (currentGroup.length > 0) {
-      const dokumentasi = findValue(currentGroup, "lampirkan");
-      const tindaklanjut = findValue(currentGroup, "tindak lanjut");
-      const PIC = findValue(currentGroup, "pic");
-      const hasil = currentCategory;
-      const lokasiGabung = `${lokasiSaatIni} - ${areaKerjaSaatIni}`;
-
-      sheet.addRow([
-        rowNumber++,
-        lokasiGabung,
-        hasil,
-        dokumentasi,
-        tindaklanjut,
-        PIC,
-        ""
-      ]);
-      sheet.getRow(sheet.lastRow!.number).height = 40;
-    }
   }
 
-  // Helper untuk cari data berdasarkan keyword di field (lowercase)
-  function findValue(group: any[], keyword: string): string {
-    const found = group.find(r => r.field.toLowerCase().includes(keyword.toLowerCase()));
-    return found?.value ?? "";
+  function findTemuanSetelahIndex(rows: any[], startIndex: number): string {
+    for (let j = startIndex + 1; j < rows.length; j++) {
+      const r = rows[j];
+      if (r.value === null) break; // Ketemu judul baru, stop
+      if (r.field.toLowerCase().includes("kriteria")) {
+        return r.value ?? "";
+      }
+    }
+    return "";
+  }
+
+  function findLampiranSetelahIndex(rows: any[], startIndex: number): string {
+    for (let j = startIndex + 1; j < rows.length; j++) {
+      const r = rows[j];
+      if (r.value === null) break; // Ketemu judul baru, stop
+      if (r.field.toLowerCase().includes("lampirkan") || r.field.toLowerCase().includes("lampiran")) {
+        return r.value ?? "";
+      }
+    }
+    return "";
   }
 
   // Tambahkan sheet
