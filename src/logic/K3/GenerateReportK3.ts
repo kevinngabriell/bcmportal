@@ -32,16 +32,24 @@ export async function generateK3Report(
     let rowNumber = 1;
     let currentGroup: any[] = [];
     let currentCategory = "";
+
     let lokasiSaatIni = "";
     let areaKerjaSaatIni = "";
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const tempLookAhead = rows.slice(i + 1, i + 10);
-      lokasiSaatIni = findValue(tempLookAhead, "lantai");
-      areaKerjaSaatIni = findValue(tempLookAhead, "area/unit");
 
+      // Update lokasi & area kerja saat ketemu row yang fix
+      if (row.field === "Lantai" && row.value) {
+        lokasiSaatIni = row.value;
+      }
+      if (row.field === "Area/Unit Kerja" && row.value) {
+        areaKerjaSaatIni = row.value;
+      }
+
+      // Deteksi header kategori (judul)
       if (row.value === null) {
+        currentCategory = row.field;
 
         if (currentGroup.length > 0) {
           const dokumentasi = findValue(currentGroup, "lampirkan");
@@ -49,8 +57,6 @@ export async function generateK3Report(
           const PIC = findValue(currentGroup, "pic");
           const hasil = currentCategory;
           const lokasiGabung = `${lokasiSaatIni} - ${areaKerjaSaatIni}`;
-
-          console.log(lokasiGabung);
 
           sheet.addRow([
             rowNumber++,
@@ -62,23 +68,17 @@ export async function generateK3Report(
             ""
           ]);
           sheet.getRow(sheet.lastRow!.number).height = 40;
-
           currentGroup = [];
         }
 
-        // Update judul kategori
-        currentCategory = row.field;
-
-        // Ambil lokasi & area kerja dari beberapa row ke depan
-        // const tempLookAhead = rows.slice(i + 1, i + 10); // Lihat 10 baris ke depan
-        // lokasiSaatIni = findValue(tempLookAhead, "lantai");
-        // areaKerjaSaatIni = findValue(tempLookAhead, "area");
+        // Ganti currentCategory
+       currentCategory = row.field;
       } else {
         currentGroup.push(row);
       }
     }
 
-    // ========== Group terakhir ==========
+    // Group terakhir
     if (currentGroup.length > 0) {
       const dokumentasi = findValue(currentGroup, "lampirkan");
       const tindaklanjut = findValue(currentGroup, "tindak lanjut");
@@ -99,16 +99,18 @@ export async function generateK3Report(
     }
   }
 
-  // Function untuk cari field berdasarkan keyword
+  // Helper untuk cari data berdasarkan keyword di field (lowercase)
   function findValue(group: any[], keyword: string): string {
-    const found = group.find(r => r.field.toLowerCase().includes(keyword));
+    const found = group.find(r => r.field.toLowerCase().includes(keyword.toLowerCase()));
     return found?.value ?? "";
   }
 
+  // Tambahkan sheet
   addSheetWithData("Sesuai", data.sesuai);
   addSheetWithData("Tidak Sesuai", data.tidakSesuai);
   addSheetWithData("Tidak Ada Item", data.tidakAdaItem);
 
+  // Export
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
